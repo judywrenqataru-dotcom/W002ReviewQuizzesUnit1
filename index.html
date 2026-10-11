@@ -1,0 +1,3851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W002 Review Quizzes</title>
+<meta name="description" content="Daily starter review quizzes for W002. Find today's quiz and show a QR code.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231F3A5F'/%3E%3Ccircle cx='23' cy='9' r='6' fill='%23D9583F'/%3E%3Crect x='6' y='16' width='20' height='3' fill='%23fff'/%3E%3Crect x='6' y='22' width='14' height='3' fill='%23fff'/%3E%3C/svg%3E">
+<!-- W002 Review Quizzes. Everything is in this one file: styles, QR maker, questions, hub and quiz.
+     The QUESTION BANK starts at the line "QUESTION BANK: UNIT 1". See README.md for how to edit it. -->
+<style>
+/* W002 Review Quizzes — shared styles.
+   Visual system copied from the W002 textbook:
+   navy #1F3A5F · coral #D9583F · panel #EEF1F6 · ink #1D2433 · slate #6B7280 · hairline #C9CED6
+   Calibri, left-aligned bold titles, coral task labels, square panels, rounded pills. */
+
+:root {
+  --navy: #1F3A5F;
+  --navy-dark: #172C48;
+  --coral: #D9583F;
+  --coral-soft: #F4A28F;
+  --coral-tint: #FBEAE5;
+  --panel: #EEF1F6;
+  --ink: #1D2433;
+  --slate: #6B7280;
+  --hair: #C9CED6;
+  --white: #FFFFFF;
+  --good: #2E7D5B;
+  --good-tint: #E3F2EA;
+  --font: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --gutter: 16px;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 19px; -webkit-text-size-adjust: 100%; }
+@media (max-width: 600px) { html { font-size: 18px; } }
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.4;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Title band (book: 40pt bold title, left-aligned; tracker top-right) ---------- */
+.band {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding: 20px var(--gutter) 14px;
+  border-bottom: 1px solid var(--hair);
+  max-width: 1100px; margin: 0 auto;
+}
+.band h1 {
+  margin: 0; color: var(--navy); font-weight: 700;
+  font-size: clamp(1.6rem, 4.5vw, 2.1rem); line-height: 1.1;
+}
+.band .sub { margin: 4px 0 0; color: var(--slate); font-size: 0.95rem; }
+
+/* ---------- Module tracker (book: phase labels over number boxes, current = navy fill) ---------- */
+.tracker { display: flex; gap: 8px; flex-shrink: 0; }
+.tracker .phase { display: flex; flex-direction: column; gap: 3px; }
+.tracker .phase-label { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; color: var(--slate); white-space: nowrap; }
+.tracker .boxes { display: flex; gap: 2px; }
+.tracker .box {
+  width: 22px; height: 22px; display: grid; place-items: center;
+  border: 1px solid var(--hair); font-size: 0.6rem; font-weight: 700; color: var(--slate); background: var(--white);
+}
+.tracker .box.on { background: var(--navy); border-color: var(--navy); color: var(--white); }
+.tracker-compact { display: none; }
+@media (max-width: 760px) {
+  .tracker { display: none; }
+  .tracker-compact {
+    display: inline-block; flex-shrink: 0; background: var(--navy); color: var(--white);
+    border-radius: 999px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;
+  }
+}
+
+/* ---------- Shared bits ---------- */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 var(--gutter); }
+.label { color: var(--coral); font-weight: 700; font-size: 1.1rem; margin: 0 0 6px; }
+.panel { background: var(--panel); padding: 16px; }
+.pill {
+  display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.04em; background: var(--panel); color: var(--navy); white-space: nowrap;
+}
+.pill.navy { background: var(--navy); color: var(--white); }
+.pill.coral { background: var(--coral); color: var(--white); }
+.pill.outline { background: transparent; border: 1px dashed var(--coral); color: var(--coral); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 46px; padding: 8px 18px; border-radius: 999px;
+  border: 2px solid var(--navy); background: var(--white); color: var(--navy); font-weight: 700; font-size: 0.95rem;
+  text-decoration: none;
+}
+.btn:hover { background: var(--panel); }
+.btn.primary { background: var(--coral); border-color: var(--coral); color: var(--white); }
+.btn.primary:hover { background: #C44A33; border-color: #C44A33; }
+.btn.navy { background: var(--navy); color: var(--white); }
+.btn.navy:hover { background: var(--navy-dark); }
+.btn.small { min-height: 38px; padding: 4px 14px; font-size: 0.85rem; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+.notice-bar { background: var(--coral-tint); border-left: 6px solid var(--coral); padding: 10px 14px; margin: 14px 0; font-size: 0.9rem; }
+
+/* Sticker (book: coral circle, white edge, dashed white inner ring, tilted ~8°) */
+.sticker {
+  position: relative; width: 150px; height: 150px; border-radius: 50%;
+  background: var(--coral); border: 4px solid var(--white); box-shadow: 0 0 0 1px var(--hair);
+  transform: rotate(-8deg); display: grid; place-items: center; color: var(--white); text-align: center; flex-shrink: 0;
+}
+.sticker::after {
+  content: ""; position: absolute; inset: 8px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.9);
+}
+.sticker .big { font-size: 2.4rem; font-weight: 700; line-height: 1; }
+.sticker .small { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; margin-top: 4px; }
+
+/* =====================================================================
+   HUB
+   ===================================================================== */
+.hub-settings { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; margin: 18px 0 6px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; color: var(--slate); text-transform: uppercase; }
+.field input, .field select {
+  min-height: 44px; padding: 6px 12px; border: 1px solid var(--hair); background: var(--white); border-radius: 0; min-width: 0;
+}
+.field input[type="text"] { width: 200px; max-width: 100%; }
+.hub-help { color: var(--slate); font-size: 0.85rem; max-width: 70ch; margin: 4px 0 0; }
+
+.cycle { margin: 26px 0 8px; }
+.cycle-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; border-bottom: 2px solid var(--navy); padding-bottom: 6px; }
+.cycle-head h2 { margin: 0; font-size: 1.25rem; color: var(--navy); }
+.cycle-head .goal { color: var(--slate); font-size: 0.9rem; }
+
+.days { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+@media (max-width: 1000px) { .days { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .days { grid-template-columns: minmax(0, 1fr); } }
+
+.card {
+  background: var(--panel); padding: 14px; display: flex; flex-direction: column; gap: 8px; position: relative;
+  border-top: 6px solid var(--navy); min-width: 0;
+}
+.card.today { border-top-color: var(--coral); box-shadow: 0 0 0 2px var(--coral); }
+.card .top { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+.card .day { font-weight: 700; color: var(--navy); font-size: 1rem; letter-spacing: 0.04em; }
+.card .date { color: var(--slate); font-size: 0.8rem; }
+.card h3 { margin: 0; font-size: 1.15rem; color: var(--ink); line-height: 1.2; }
+.card .module { color: var(--coral); font-weight: 700; font-size: 0.85rem; }
+.card .reviews { font-size: 0.85rem; color: var(--slate); margin: 0; flex-grow: 1; }
+.card .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.card .actions .btn.primary { flex: 1 1 100%; }
+.card .note { font-size: 0.75rem; color: var(--coral); border: 1px dashed var(--coral); padding: 4px 8px; background: var(--white); }
+
+.footer { color: var(--slate); font-size: 0.8rem; padding: 30px var(--gutter) 40px; max-width: 1100px; margin: 0 auto; }
+
+/* ---------- QR display (book OPENER layout: navy background) ---------- */
+.qr-screen {
+  position: fixed; inset: 0; background: var(--navy); color: var(--white); z-index: 50;
+  display: none; overflow: auto;
+}
+.qr-screen.open { display: block; }
+.qr-inner {
+  min-height: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4vw; align-items: center;
+  padding: 4vh 5vw;
+}
+@media (max-width: 800px) { .qr-inner { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: left; } }
+.qr-card {
+  background: var(--white); padding: 18px; border: 3px dashed var(--coral-soft); outline: 10px solid var(--white);
+}
+.qr-card canvas { display: block; width: min(62vh, 80vw); height: auto; image-rendering: pixelated; }
+.qr-text h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin: 0 0 8px; line-height: 1.05; }
+.qr-text .lead { font-size: clamp(1.2rem, 2.6vw, 1.9rem); margin: 0 0 18px; }
+.qr-text .meta { font-size: clamp(1rem, 2vw, 1.3rem); margin: 0 0 6px; color: #DCE3EE; }
+.qr-text .quizname { color: var(--coral-soft); font-weight: 700; }
+.qr-text .code {
+  display: inline-block; margin: 12px 0; background: var(--white); color: var(--navy); font-weight: 700;
+  border-radius: 999px; padding: 6px 18px; font-size: clamp(1.1rem, 2.4vw, 1.6rem); letter-spacing: 0.08em;
+}
+.qr-text .late { font-size: clamp(0.95rem, 1.8vw, 1.2rem); color: #DCE3EE; max-width: 34ch; }
+.qr-text .link { font-size: 0.75rem; color: #B9C4D6; word-break: break-all; margin-top: 10px; max-width: 60ch; }
+.qr-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.qr-tools .btn { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.7); }
+.qr-tools .btn:hover { background: rgba(255,255,255,0.1); }
+.qr-tools .btn.primary { background: var(--coral); border-color: var(--coral); }
+.timer {
+  font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 10px; display: none;
+}
+.timer.on { display: block; }
+.timer.low { color: var(--coral-soft); }
+
+/* =====================================================================
+   QUIZ PLAYER
+   ===================================================================== */
+.quiz-main { max-width: 860px; margin: 0 auto; padding: 18px var(--gutter) 120px; }
+.progress { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 18px; }
+.dot {
+  width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--hair); background: var(--white);
+  font-size: 0.75rem; font-weight: 700; color: var(--slate); padding: 0;
+}
+.dot.done { background: var(--panel); color: var(--navy); border-color: var(--navy); }
+.dot.here { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+.qtitle { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.prompt { font-size: 1.2rem; font-weight: 700; margin: 4px 0 14px; color: var(--ink); }
+.context { background: var(--panel); padding: 12px 16px; margin: 0 0 14px; white-space: pre-line; border-left: 6px solid var(--navy); }
+.hint { color: var(--slate); font-size: 0.85rem; margin: -6px 0 12px; }
+
+/* multiple choice */
+.options { display: grid; gap: 10px; }
+.opt {
+  display: flex; align-items: center; gap: 12px; text-align: left; width: 100%;
+  background: var(--white); border: 2px solid var(--hair); padding: 10px 14px; min-height: 54px;
+}
+.opt .letter {
+  width: 32px; height: 32px; flex-shrink: 0; display: grid; place-items: center; background: var(--panel); color: var(--navy); font-weight: 700;
+}
+.opt:hover { border-color: var(--navy); }
+.opt.on { border-color: var(--navy); background: var(--panel); }
+.opt.on .letter { background: var(--navy); color: var(--white); }
+.options.two { grid-template-columns: 1fr 1fr; }
+
+/* gap fill */
+.gaptext { font-size: 1.15rem; line-height: 2.3; background: var(--panel); padding: 12px 16px; }
+.gapin {
+  border: none; border-bottom: 3px solid var(--navy); background: var(--white); padding: 2px 8px; margin: 0 2px;
+  min-width: 5ch; font-weight: 700; color: var(--navy); border-radius: 0; line-height: 1.4;
+}
+.gapin:focus { outline: none; border-bottom-color: var(--coral); background: var(--coral-tint); }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+.bank .bank-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; color: var(--slate); }
+.bank .pill { font-size: 0.95rem; font-weight: 400; padding: 4px 14px; background: var(--white); border: 1px solid var(--hair); color: var(--ink); }
+
+/* chips (sort / order) */
+.chip {
+  display: block; width: 100%; text-align: left; background: var(--white); border: 2px solid var(--navy);
+  padding: 8px 12px; min-height: 44px; touch-action: none; user-select: none; -webkit-user-select: none;
+  border-radius: 8px; font-size: 0.95rem;
+}
+.chip.sel { border-color: var(--coral); box-shadow: 0 0 0 3px var(--coral-tint); background: var(--coral-tint); }
+.chip.ghost { position: fixed; pointer-events: none; z-index: 100; opacity: 0.92; box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: auto; max-width: 80vw; }
+.chip.placeholder { opacity: 0.3; }
+
+.pool { display: grid; gap: 8px; padding: 12px; border: 2px dashed var(--hair); min-height: 64px; margin-bottom: 12px; }
+.pool:empty::before { content: "All placed. Tap a sentence to move it."; color: var(--slate); font-size: 0.85rem; }
+.pool.target { border-color: var(--coral); }
+.bins { display: grid; gap: 10px; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); }
+@media (max-width: 640px) { .bins { grid-template-columns: minmax(0, 1fr); } }
+.bin { background: var(--panel); padding: 10px; min-height: 110px; display: flex; flex-direction: column; gap: 8px; border: 2px solid transparent; text-align: left; }
+.bin.target, .bin:hover.armed { border-color: var(--coral); }
+.bin-head { font-weight: 700; color: var(--navy); font-size: 0.9rem; letter-spacing: 0.04em; text-transform: uppercase; display: flex; justify-content: space-between; }
+.bin-head .n { color: var(--slate); font-weight: 400; }
+
+.slots { display: grid; gap: 8px; margin-bottom: 14px; }
+.slot { display: flex; gap: 10px; align-items: stretch; }
+.slot .num { width: 34px; flex-shrink: 0; display: grid; place-items: center; background: var(--navy); color: var(--white); font-weight: 700; }
+.slot .empty { flex: 1; border: 2px dashed var(--hair); min-height: 44px; }
+.slot .chip { flex: 1; }
+
+/* match */
+.match-row { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--hair); }
+@media (max-width: 640px) { .match-row { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.match-row .left { font-weight: 700; }
+.match-row select { width: 100%; min-height: 48px; border: 2px solid var(--navy); background: var(--white); padding: 6px 10px; border-radius: 0; }
+.match-row select.chosen { background: var(--panel); }
+
+/* tap */
+.taptext { background: var(--panel); padding: 12px 16px; line-height: 1.9; font-size: 1.1rem; }
+.tapseg { background: transparent; border: none; padding: 2px 2px; margin: 0; text-align: left; border-radius: 4px; display: inline; line-height: inherit; }
+.tapseg.sentence { border-bottom: 2px dotted var(--hair); }
+.tapseg:hover { background: var(--white); }
+.tapseg.on { background: var(--coral); color: var(--white); border-bottom-color: var(--coral); }
+.tapcount { margin-top: 8px; color: var(--slate); font-size: 0.85rem; }
+
+/* bottom nav */
+.navbar {
+  position: fixed; left: 0; right: 0; bottom: 0; background: var(--white); border-top: 1px solid var(--hair);
+  padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+}
+.navbar .inner { max-width: 860px; margin: 0 auto; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.navbar .count { color: var(--slate); font-size: 0.85rem; text-align: center; }
+
+/* start + results */
+.start { display: grid; gap: 18px; max-width: 640px; }
+.start .facts { display: flex; gap: 8px; flex-wrap: wrap; }
+.start input[type="text"] { min-height: 52px; font-size: 1.1rem; padding: 8px 14px; border: 2px solid var(--navy); width: 100%; border-radius: 0; }
+
+.result-top { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin: 10px 0 18px; }
+.result-top h2 { margin: 0 0 6px; color: var(--navy); font-size: 1.6rem; }
+.slip { background: var(--panel); padding: 12px 16px; border-left: 6px solid var(--coral); font-size: 0.95rem; }
+.slip b { color: var(--navy); }
+
+.review { display: grid; gap: 14px; margin-top: 18px; }
+.ritem { border: 1px solid var(--hair); padding: 14px; }
+.ritem .rhead { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+.mark { width: 30px; height: 30px; display: grid; place-items: center; font-weight: 700; color: var(--white); flex-shrink: 0; }
+.mark.ok { background: var(--good); }
+.mark.part { background: #C98A1B; }
+.mark.no { background: var(--coral); }
+.ritem .rprompt { font-weight: 700; }
+.ritem .explain { margin-top: 8px; background: var(--panel); padding: 8px 12px; font-size: 0.95rem; }
+.rlist { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
+.rlist li { padding: 4px 8px; font-size: 0.95rem; }
+.rlist li.right { background: var(--good-tint); }
+.rlist li.wrong { background: var(--coral-tint); text-decoration: line-through; text-decoration-color: var(--coral); }
+.rlist li.right-but-missed { background: var(--good-tint); border-left: 4px solid var(--good); }
+.tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; padding: 1px 6px; margin-left: 6px; border-radius: 999px; text-decoration: none; display: inline-block; }
+.tag.g { background: var(--good); color: var(--white); }
+.tag.c { background: var(--coral); color: var(--white); }
+.rtable { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 0.92rem; }
+.rtable th, .rtable td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.rtable th { font-size: 0.72rem; letter-spacing: 0.05em; color: var(--slate); text-transform: uppercase; }
+.rtable td.ok { color: var(--good); font-weight: 700; }
+.rtable td.no { color: var(--coral); font-weight: 700; }
+.rtext { background: var(--panel); padding: 8px 12px; line-height: 1.8; margin-top: 6px; }
+.rtext .hit { background: var(--good-tint); border-bottom: 3px solid var(--good); }
+.rtext .miss { background: var(--coral-tint); text-decoration: line-through; text-decoration-color: var(--coral); }
+.rtext .found { background: var(--good); color: var(--white); padding: 0 3px; }
+.rtext .gapans { font-weight: 700; padding: 0 4px; }
+.rtext .gapans.ok { color: var(--good); }
+.rtext .gapans.no { color: var(--coral); text-decoration: line-through; }
+.rtext .gapfix { color: var(--good); font-weight: 700; }
+
+/* modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(29,36,51,0.55); display: none; place-items: center; z-index: 80; padding: var(--gutter); }
+.modal-bg.open { display: grid; }
+.modal { background: var(--white); max-width: 460px; width: 100%; padding: 20px; border-top: 6px solid var(--coral); }
+.modal h3 { margin: 0 0 8px; color: var(--navy); }
+.modal .row { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 16px; }
+
+/* answer key (teacher) */
+.keyq { border-bottom: 1px solid var(--hair); padding: 14px 0; break-inside: avoid; }
+.keyq .ans { background: var(--good-tint); padding: 6px 10px; margin-top: 6px; }
+.keyq .ans ol, .keyq .ans ul { margin: 4px 0; padding-left: 22px; }
+.teacher-bar { background: var(--navy); color: var(--white); padding: 8px var(--gutter); font-size: 0.85rem; text-align: center; }
+.teacher-bar a { color: var(--coral-soft); }
+
+@media print {
+  .navbar, .no-print, .teacher-bar { display: none !important; }
+  .quiz-main { padding-bottom: 0; }
+  body { font-size: 12pt; }
+}
+
+/* =====================================================================
+   HUB v2 (11 Oct): how-to, unit tabs, module-first cards, results
+   ===================================================================== */
+.howto { background: var(--panel); border-left: 6px solid var(--coral); padding: 10px 16px; margin: 16px 0 4px; }
+.howto summary { font-weight: 700; color: var(--navy); cursor: pointer; font-size: 1.05rem; }
+.howto ol { margin: 8px 0 4px; padding-left: 22px; }
+.howto li { margin: 4px 0; }
+
+.unit-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0 0; border-bottom: 2px solid var(--navy); }
+.unit-tab {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+  background: var(--panel); border: 1px solid var(--hair); border-bottom: none; padding: 8px 16px; min-height: 52px; max-width: 100%;
+}
+.unit-tab .ut-title { font-weight: 700; color: var(--navy); font-size: 1.05rem; }
+.unit-tab .ut-sub { font-size: 0.78rem; color: var(--slate); }
+.unit-tab.on { background: var(--navy); border-color: var(--navy); }
+.unit-tab.on .ut-title, .unit-tab.on .ut-sub { color: var(--white); }
+
+.card .modnum { font-weight: 700; color: var(--white); background: var(--navy); padding: 2px 10px; letter-spacing: 0.05em; font-size: 0.95rem; }
+.card .day { font-weight: 400; color: var(--slate); font-size: 0.9rem; letter-spacing: 0; }
+.card .actions .btn.wide { flex: 1 1 100%; }
+
+/* results screen (teacher) */
+.res-screen { position: fixed; inset: 0; background: var(--white); z-index: 60; display: none; }
+.res-screen.open { display: block; }
+.res-inner { height: 100%; display: flex; flex-direction: column; max-width: 1200px; margin: 0 auto; padding: 14px var(--gutter); }
+.res-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border-bottom: 2px solid var(--navy); padding-bottom: 8px; }
+.res-head h2 { margin: 2px 0; color: var(--navy); font-size: 1.5rem; }
+.res-filters { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 10px 0; font-size: 0.95rem; }
+.res-filters label { display: inline-flex; gap: 6px; align-items: center; min-height: 36px; }
+.res-upd { color: var(--slate); font-size: 0.8rem; margin-left: auto; }
+.res-body { flex: 1; overflow: auto; }
+.res-summary { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; }
+.res-scroll { overflow-x: auto; }
+.res-table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.res-table th, .res-table td { border-bottom: 1px solid var(--hair); padding: 6px 8px; text-align: left; vertical-align: top; }
+.res-table th { font-size: 0.72rem; letter-spacing: 0.05em; color: var(--slate); text-transform: uppercase; position: sticky; top: 0; background: var(--white); }
+.res-table .qcol, .res-table .qcell { text-align: center; width: 38px; padding: 6px 2px; }
+.res-table .qcell.ok { color: var(--good); font-weight: 700; }
+.res-table .qcell.part { color: #C98A1B; font-weight: 700; }
+.res-table .qcell.no { color: var(--coral); font-weight: 700; }
+.res-table tfoot td { font-weight: 700; color: var(--navy); background: var(--panel); }
+.res-table tfoot .qcell.low { color: var(--white); background: var(--coral); }
+.res-name { background: none; border: none; padding: 0; color: var(--navy); font-weight: 700; text-decoration: underline; text-align: left; }
+.res-sec { color: var(--slate); font-size: 0.78rem; }
+.res-detail td { background: var(--panel); }
+.res-detail ol { margin: 4px 0; padding-left: 22px; }
+.res-detail li { margin: 6px 0; }
+.res-detail .ok { color: var(--good); }
+.res-detail .no { color: var(--coral); }
+.res-correct { color: var(--good); }
+
+</style>
+</head>
+<body>
+<div id="app"><p style="padding:16px;font-family:Calibri,Arial,sans-serif">Loading ... If this message stays, the page could not run. Open it in Chrome, Safari or Edge from its web address (for example your GitHub Pages link), not from a file preview.</p></div>
+<script>
+/* ===== QR code maker: QRCode for JavaScript, (c) 2009 Kazuhiko Arase, MIT licence (see LICENSE-qrcode.txt) ===== */
+/* QRCode for JavaScript — Copyright (c) 2009 Kazuhiko Arase — MIT licence (see qrcode-LICENSE.txt).
+   Node modules from qrcode-terminal/vendor/QRCode, bundled for the browser. Exposes window.W002QR.make(text) -> boolean[][] */
+(function(){var __m={};function require(p){return __m[p.replace(/^.*\//,'')];}
+__m['QRMode']=(function(){var module={exports:{}};
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+;return module.exports;})();
+__m['QRErrorCorrectLevel']=(function(){var module={exports:{}};
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+;return module.exports;})();
+__m['QRMaskPattern']=(function(){var module={exports:{}};
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+;return module.exports;})();
+__m['QRMath']=(function(){var module={exports:{}};
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+;return module.exports;})();
+__m['QRPolynomial']=(function(){var module={exports:{}};
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+;return module.exports;})();
+__m['QR8bitByte']=(function(){var module={exports:{}};
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+;return module.exports;})();
+__m['QRBitBuffer']=(function(){var module={exports:{}};
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+;return module.exports;})();
+__m['QRRSBlock']=(function(){var module={exports:{}};
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+;return module.exports;})();
+__m['QRUtil']=(function(){var module={exports:{}};
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+;return module.exports;})();
+__m['index']=(function(){var module={exports:{}};
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+;return module.exports;})();
+var QRCode=__m['index'];var L=__m['QRErrorCorrectLevel'];
+window.W002QR={make:function(text,level){var q=new QRCode(-1,L[level||'M']);q.addData(text);q.make();var n=q.getModuleCount(),rows=[];for(var r=0;r<n;r++){var row=[];for(var c=0;c<n;c++)row.push(q.isDark(r,c));rows.push(row);}return rows;}};
+})();
+
+</script>
+<script>
+/* =====================================================================
+   SETTINGS
+   resultsURL: the Web app URL of the Google Apps Script that collects
+   results (see README, "Teacher results"). Leave it as '' to turn
+   teacher results off; the quizzes still work without it.
+   ===================================================================== */
+window.W002 = window.W002 || {};
+window.W002.CONFIG = {
+  resultsURL: ''
+};
+</script>
+<script>
+/* ===== Shared helpers ===== */
+/* W002 Review Quizzes — shared helpers (no libraries). */
+(function () {
+  'use strict';
+  var W = window.W002 = window.W002 || { units: {} };
+
+  /* Escape text for HTML. */
+  /* This page's own file name, so links work from any address. */
+  W.PAGE = location.pathname.split('/').pop() || 'index.html';
+
+  W.esc = function (s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  };
+
+  /* Find a quiz by id across all loaded units. */
+  W.findQuiz = function (id) {
+    for (var u in W.units) {
+      var unit = W.units[u];
+      for (var i = 0; i < unit.quizzes.length; i++) {
+        if (unit.quizzes[i].id === id) return { unit: unit, quiz: unit.quizzes[i], index: i };
+      }
+    }
+    return null;
+  };
+
+  /* Safe localStorage (private windows, blocked storage). */
+  W.store = {
+    get: function (k, fallback) {
+      try { var v = localStorage.getItem(k); return v == null ? fallback : JSON.parse(v); } catch (e) { return fallback; }
+    },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
+    del: function (k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+  };
+
+  /* Small seeded random generator so a student's shuffles stay the same after a refresh. */
+  W.rng = function (seed) {
+    var h = 1779033703 ^ seed.length;
+    for (var i = 0; i < seed.length; i++) { h = Math.imul(h ^ seed.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    var a = h >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+  W.shuffledIndexes = function (n, rand) {
+    var a = []; for (var i = 0; i < n; i++) a.push(i);
+    for (var j = n - 1; j > 0; j--) { var k = Math.floor(rand() * (j + 1)); var t = a[j]; a[j] = a[k]; a[k] = t; }
+    /* Avoid leaving a list in its original order when it has 3+ items. */
+    if (n > 2) {
+      var same = true; for (var m = 0; m < n; m++) if (a[m] !== m) { same = false; break; }
+      if (same) { a.push(a.shift()); }
+    }
+    return a;
+  };
+
+  /* Session codes: no 0/O, 1/I/L. */
+  W.newCode = function () {
+    var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', s = '';
+    var buf = new Uint32Array(4);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(buf); else for (var i = 0; i < 4; i++) buf[i] = Math.floor(Math.random() * 1e9);
+    for (var j = 0; j < 4; j++) s += chars[buf[j] % chars.length];
+    return s;
+  };
+
+  W.todayISO = function () {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  };
+  W.prettyDate = function (iso) {
+    if (!iso) return '';
+    var p = iso.split('-'); var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  /* Settings live in the SETTINGS block of index.html (W002.CONFIG). */
+  W.CONFIG = W.CONFIG || {};
+
+  W.download = function (canvas, name) {
+    var a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png'); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  /* The correct answer as plain text (teacher results view and answer key). */
+  W.correctText = function (q) {
+    switch (q.type) {
+      case 'mc': return (Array.isArray(q.answer) ? q.answer : [q.answer]).map(function (k) { return q.options[k]; }).join(' | ');
+      case 'gap': return (q.text.match(/\[\[(.+?)\]\]/g) || []).map(function (m) { return m.slice(2, -2).split('|')[0]; }).join(' | ');
+      case 'sort': return q.items.map(function (it) { return it[0] + ' → ' + q.bins[it[1]]; }).join(' | ');
+      case 'order': return q.items.join(' → ');
+      case 'match': return q.pairs.map(function (p) { return p[0] + ' → ' + p[1]; }).join(' | ');
+      case 'tap':
+        if (q.mode === 'word') return (q.text.match(/\{([^}]+)\}/g) || []).map(function (m) { return m.slice(1, -1); }).join(' | ');
+        return q.answer.map(function (k) { return q.sentences[k]; }).join(' | ');
+    }
+    return '';
+  };
+
+  W.DAY_NAMES = { Sun: 'Sunday', Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday' };
+  W.DAY_OFFSET = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4 };
+
+  /* Module tracker, same layout as the book. */
+  W.trackerHTML = function (unit, current) {
+    var html = '<div class="tracker" aria-label="Module ' + current + ' of 14">';
+    unit.phases.forEach(function (p) {
+      html += '<div class="phase"><div class="phase-label">' + W.esc(p.label) + '</div><div class="boxes">';
+      for (var m = p.from; m <= p.to; m++) html += '<div class="box' + (m === current ? ' on' : '') + '">' + m + '</div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+    var phase = unit.phases.filter(function (p) { return current >= p.from && current <= p.to; })[0];
+    html += '<span class="tracker-compact">MODULE ' + current + (phase ? ' · ' + W.esc(phase.label) : '') + '</span>';
+    return html;
+  };
+
+  /* Draw a QR code onto a canvas. Returns the canvas. */
+  W.drawQR = function (canvas, text, opts) {
+    opts = opts || {};
+    var m = window.W002QR.make(text, opts.level || 'M');
+    var n = m.length, quiet = 4, scale = opts.scale || 12, caption = opts.caption || '';
+    var capH = caption ? Math.round(scale * 4.5) : 0;
+    canvas.width = (n + quiet * 2) * scale;
+    canvas.height = (n + quiet * 2) * scale + capH;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#1D2433';
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (m[r][c]) ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+    if (caption) {
+      ctx.fillStyle = '#1F3A5F';
+      ctx.font = 'bold ' + Math.round(scale * 2) + 'px Calibri, Carlito, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(caption, canvas.width / 2, (n + quiet * 2) * scale + Math.round(scale * 1.6), canvas.width - scale * 2);
+    }
+    return canvas;
+  };
+
+  /* Normalise typed answers: case, spaces, curly quotes, end punctuation. */
+  W.norm = function (s) {
+    return String(s || '').toLowerCase()
+      .replace(/[‘’`´]/g, "'").replace(/[“”]/g, '"')
+      .replace(/\s+/g, ' ').trim().replace(/[.,!?;:]+$/, '').trim();
+  };
+})();
+
+</script>
+<script>
+/* =====================================================================
+   QUESTION BANK: UNIT 1
+   ===================================================================== */
+/* =====================================================================
+   W002 Review Quizzes — Unit 1 question bank (revised 11 Oct 2026)
+   ---------------------------------------------------------------------
+   One quiz for each class (Sunday to Thursday), 10 questions each.
+   Each quiz is the STARTER for the module named in `module`. It reviews
+   the lesson(s) before it and recycles older ideas.
+   Quiz ids (u1-q01 ...) are printed in the book's QR codes: do not change them.
+
+   Question types (see README.md, "Editing questions"):
+   mc     { type:'mc', prompt, context?, options:[...], answer: 0 }      (answer:[0,2] = choose two)
+   gap    { type:'gap', prompt, context?, text:'A [[cause]] comes before.', bank?:[...] }
+   sort   { type:'sort', prompt, context?, bins:['Cause','Effect'], items:[['text', 0], ...] }
+   order  { type:'order', prompt, context?, items:[...in the CORRECT order...] }
+   match  { type:'match', prompt, pairs:[['left','right'], ...] }
+   tap    { type:'tap', mode:'sentence', prompt, sentences:[...], answer:[3] }
+          { type:'tap', mode:'word', prompt, text:'Many {student} use phones.' }
+   Word banks, options, cards and lists are shuffled for each student.
+   ===================================================================== */
+window.W002 = window.W002 || {};
+window.W002.units = window.W002.units || {};
+window.W002.units.u1 = {
+  id: 'u1',
+  title: 'Unit 1',
+  subtitle: 'Cause and effect: from paragraph to essay',
+  phases: [
+    { label: 'UNDERSTAND', from: 1, to: 4 },
+    { label: 'TRY', from: 5, to: 7 },
+    { label: 'DEVELOP', from: 8, to: 11 },
+    { label: 'WRITE & REFLECT', from: 12, to: 14 }
+  ],
+  cycles: [
+    { n: 1, label: 'Modules 1–7', goal: 'Weekly Writing 2: a body paragraph' },
+    { n: 2, label: 'Modules 8–14', goal: 'Weekly Writing 3: an introduction for the paragraph' }
+  ],
+  quizzes: [
+
+  /* ================================================================
+     QUIZ 1 · Sunday · starter for Module 1
+     Reviews: paragraph basics (Week 1)
+     ================================================================ */
+  {
+    id: 'u1-q01', cycle: 1, day: 'Sun', module: 1,
+    moduleTitle: 'From Paragraph to Essay',
+    title: 'Remember the paragraph',
+    reviews: 'Paragraph basics from Week 1: topic sentence, points, details, concluding sentence.',
+    questions: [
+      { type: 'mc',
+        prompt: 'Where does the topic sentence usually go?',
+        options: ['At the start of the paragraph', 'In the middle of the paragraph', 'At the end of the paragraph', 'After the concluding sentence'],
+        answer: 0,
+        explain: 'The topic sentence usually comes first. It tells the reader the main idea before the points and details.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'Read the paragraph. Tap the concluding sentence.',
+        sentences: [
+          'Drinking enough water is important for the body in several ways.',
+          'First, water helps the body stay cool in hot weather.',
+          'When we sweat, the body loses water, so we need to drink more.',
+          'Second, water helps the brain work well.',
+          'People who do not drink enough may get headaches and feel tired.',
+          'For these reasons, everyone should drink water often during the day.'
+        ],
+        answer: [5],
+        explain: 'The concluding sentence is at the end. It gives the main idea again: water is important, so drink it often.' },
+
+      { type: 'sort',
+        prompt: 'Is it a topic sentence or a detail? Put each sentence in the correct box.',
+        bins: ['Topic sentence', 'Detail'],
+        items: [
+          ['Fast food can cause several health problems.', 0],
+          ['Burgers and fries have a lot of fat and salt.', 1],
+          ['Exercise is good for the body in many ways.', 0],
+          ['Walking for 30 minutes makes the heart stronger.', 1],
+          ['Air pollution has three main causes.', 0],
+          ['Cars and trucks produce smoke all day.', 1]
+        ],
+        explain: 'A topic sentence gives a big main idea for the whole paragraph. A detail gives one small piece of information.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'A paragraph has [[one|1]] main idea. Each point needs a [[detail|details]] or an example.',
+        bank: ['one', 'three', 'detail', 'title'],
+        explain: 'One paragraph = one main idea. Every point needs a detail to explain it.' },
+
+      { type: 'mc',
+        prompt: 'Point: "Exercise is good for the heart." Which sentence is a good detail for this point?',
+        options: [
+          'When we exercise, the heart gets stronger and pumps blood better.',
+          'Many people like football.',
+          'Exercise is good for the heart.',
+          'My gym is near my house.'
+        ],
+        answer: 0,
+        explain: 'A good detail explains the point. It says how exercise helps the heart. The other sentences are off-topic or repeat the point.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'My brother {play} football every Friday.',
+        explain: 'He / she / my brother + verb-s: My brother plays football every Friday.' },
+
+      { type: 'order',
+        prompt: 'Put the sentences in the correct order to make a short paragraph. Tap them in order.',
+        items: [
+          'Walking every day has several benefits.',
+          'First, it makes the heart stronger.',
+          'Second, it helps people sleep better at night.',
+          'For these reasons, people should try to walk every day.'
+        ],
+        explain: 'Topic sentence first. Then the points in order (First, Second). The concluding sentence (For these reasons) comes last.' },
+
+      { type: 'mc',
+        prompt: 'Odd one out! This paragraph is about the benefits of eating fruit. Which sentence does NOT belong?',
+        options: [
+          'Fruit has vitamins that help the body fight illness.',
+          'Fruit has a lot of water, so it helps us stay cool.',
+          'My favourite shop sells cheap phones.',
+          'Fruit is a healthy snack between meals.'
+        ],
+        answer: 2,
+        explain: 'Every sentence must be about the topic. Phones are not about the benefits of fruit, so this sentence is off-topic.' },
+
+      { type: 'match',
+        prompt: 'Match each part of a paragraph to its job.',
+        pairs: [
+          ['Topic sentence', 'It gives the main idea of the whole paragraph.'],
+          ['Supporting point', 'It gives one reason, effect, or idea.'],
+          ['Detail or example', 'It explains a point with more information.'],
+          ['Concluding sentence', 'It tells the reader the main idea again at the end.']
+        ],
+        explain: 'These are the four parts of a paragraph. You will see the same parts inside an essay.' },
+
+      { type: 'gap',
+        prompt: 'Fix the mistake. Type the correct word.',
+        context: 'Wrong: Water help the body stay cool.',
+        text: 'Right: Water [[helps]] the body stay cool.',
+        explain: 'Water is singular (it), so the verb needs -s: water helps.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 2 · Monday · starter for Module 2
+     Reviews: Module 1 (paragraph → essay)
+     ================================================================ */
+  {
+    id: 'u1-q02', cycle: 1, day: 'Mon', module: 2,
+    moduleTitle: 'Same Shape, New Topic',
+    title: 'From paragraph to essay',
+    reviews: 'Module 1: how a paragraph grows into an essay; the jobs of the introduction, body and conclusion.',
+    questions: [
+      { type: 'mc',
+        prompt: 'An essay has three parts. Which list is correct?',
+        options: ['introduction, body, conclusion', 'topic sentence, detail, example', 'cause, effect, result', 'title, picture, conclusion'],
+        answer: 0,
+        explain: 'An essay has an introduction, a body, and a conclusion. Each part is a full paragraph.' },
+
+      { type: 'match',
+        prompt: 'Match each part of an essay to its job.',
+        pairs: [
+          ['Introduction', 'gets the reader ready and gives the main idea.'],
+          ['Body', 'explains the main idea with points, details, and examples.'],
+          ['Conclusion', 'gives the main idea again and a final thought.']
+        ],
+        explain: 'Introduction = get ready + main idea. Body = explain. Conclusion = main idea again + final thought.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'A paragraph and an essay have the same [[shape]]. In an essay, each part is a full [[paragraph]].',
+        bank: ['shape', 'paragraph', 'sentence', 'colour'],
+        explain: 'Paragraph: topic sentence → support → concluding sentence. Essay: the same shape, but each part is a full paragraph.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'Read the body paragraph. Tap the THREE sentences that give the main points (the effects).',
+        sentences: [
+          'Drinking too many energy drinks has several bad effects on young people.',
+          'One effect is poor sleep.',
+          'Energy drinks have a lot of caffeine, so people cannot fall asleep at night.',
+          'A second effect is a fast heartbeat.',
+          'Too much caffeine makes the heart work harder.',
+          'A third effect is weak teeth.',
+          'The sugar in the drinks can damage teeth.'
+        ],
+        answer: [1, 3, 5],
+        explain: 'The points name the effects: poor sleep, a fast heartbeat, weak teeth. The other sentences are the topic sentence and the details.' },
+
+      { type: 'sort',
+        prompt: 'These sentences come from one short essay about sugar. Put each sentence in the correct part.',
+        bins: ['Introduction', 'Body', 'Conclusion'],
+        items: [
+          ['Many young people eat sweets and drink soda every day.', 0],
+          ['Eating too much sugar can have several bad effects on health.', 0],
+          ['One effect is that teeth can become weak.', 1],
+          ['Another effect is that people can gain weight.', 1],
+          ['In conclusion, too much sugar can hurt the body in several ways.', 2],
+          ['People should choose water instead of soda.', 2]
+        ],
+        explain: 'The introduction opens the topic and gives the main idea. The body gives the effects. The conclusion gives the main idea again and a final thought.' },
+
+      { type: 'mc',
+        prompt: 'A paragraph grows into an essay. Where does the main idea of the paragraph go?',
+        options: [
+          'Into the introduction, and again in the conclusion',
+          'Only into the middle of the body',
+          'Nowhere. The writer cuts it.',
+          'Only into the final thought'
+        ],
+        answer: 0,
+        explain: 'The introduction gives the main idea, and the conclusion gives it again. The body explains it.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'Read the conclusion of an essay. Tap the TWO sentences that give a final thought.',
+        sentences: [
+          'In conclusion, too little sleep can cause serious problems for both the brain and the body.',
+          'It can make thinking harder, reduce energy, and make it more difficult for the body to stay healthy.',
+          'People should try to make enough sleep part of their daily routine.',
+          'Good sleep can help them study, work, and live more successfully.'
+        ],
+        answer: [2, 3],
+        explain: 'The first two sentences give the main idea and the effects again. The last two give a final thought: advice for the reader.' },
+
+      { type: 'mc',
+        prompt: 'Which sentence about an essay is true?',
+        options: [
+          'The whole essay explains one main idea, and the body gives the points that support it.',
+          'Each paragraph in an essay is about a different topic.',
+          'The conclusion gives new points that are not in the body.',
+          'The introduction gives all the details and examples.'
+        ],
+        answer: 0,
+        explain: 'An essay has one main idea. The body gives several points that explain it. The conclusion does not add new points.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'Tired people may {finds} it hard to concentrate.',
+        explain: 'After may, can, or should, use the base verb: may find (not may finds).' },
+
+      { type: 'order',
+        prompt: 'Put the parts of a paragraph in the correct order. Tap them in order.',
+        items: ['Topic sentence', 'Supporting point', 'Detail or example', 'Concluding sentence'],
+        explain: 'Start with the main idea. Give a point, then explain it with a detail. End with the concluding sentence.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 3 · Tuesday · starter for Module 4
+     Reviews: Modules 2–3 (causes and effects), recycles Module 1
+     ================================================================ */
+  {
+    id: 'u1-q03', cycle: 1, day: 'Tue', module: 4,
+    moduleTitle: 'Build a Body Paragraph',
+    title: 'Causes and effects',
+    reviews: 'Modules 2–3: causes and effects, before and after, causes essays and effects essays. Recycles Module 1.',
+    questions: [
+      { type: 'mc',
+        prompt: 'Complete the sentence. A cause tells ...',
+        options: ['why it happens.', 'what happens next.', 'the main idea again.', 'one example.'],
+        answer: 0,
+        explain: 'A cause tells why it happens. An effect tells what happens next.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'Ask: Does it happen before the situation or after it? Before = [[cause|a cause|causes]]. After = [[effect|an effect|effects]].',
+        bank: ['cause', 'effect', 'example', 'topic'],
+        explain: 'A cause comes before. An effect comes after.' },
+
+      { type: 'sort',
+        prompt: 'Read the situation. Is each idea a cause, an effect, or not related?',
+        context: 'SITUATION: Many people in Doha drive to work every day.',
+        bins: ['Cause', 'Effect', 'Not related'],
+        items: [
+          ['Buses do not go to every area.', 0],
+          ['It is too hot to walk in the summer.', 0],
+          ['The roads are full of traffic in the morning.', 1],
+          ['Cars make the air dirty.', 1],
+          ['Camels can live for days without water.', 2]
+        ],
+        explain: 'Causes come before (why people drive). Effects come after (what happens). Camels are not about driving to work.' },
+
+      { type: 'mc',
+        prompt: 'Which question does an effects essay answer?',
+        options: ['What happens?', 'Why does it happen?', 'When did it happen?', 'Who did it?'],
+        answer: 0,
+        explain: 'An effects essay answers What happens? A causes essay answers Why?' },
+
+      { type: 'sort',
+        prompt: 'Each sentence is the main idea of an essay. Will the essay explain causes or effects? Put each sentence in the Causes box or the Effects box.',
+        bins: ['Causes', 'Effects'],
+        items: [
+          ['There are several reasons why people buy electric cars.', 0],
+          ['Air pollution can harm people’s health in many ways.', 1],
+          ['Several factors cause young people to gain weight.', 0],
+          ['Playing video games all night can affect students’ grades.', 1]
+        ],
+        explain: 'Reasons why / factors cause = causes (Why?). Harm in many ways / can affect = effects (What happens?).' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'There {is} three main causes of lateness.',
+        explain: 'Three causes is plural, so use there are: There are three main causes.' },
+
+      { type: 'mc',
+        prompt: 'Which part of an essay gives the main idea again and a final thought?',
+        options: ['The introduction', 'The body', 'The conclusion', 'The topic sentence'],
+        answer: 2,
+        explain: 'The conclusion gives the main idea again and a final thought.' },
+
+      { type: 'order',
+        prompt: 'Put these sentences from a body paragraph in the correct order. Tap them in order.',
+        items: [
+          'There are three main causes of lateness.',
+          'The first cause is heavy traffic.',
+          'Many students drive, and the roads are very busy in the morning.',
+          'Another cause is going to bed too late.'
+        ],
+        explain: 'Topic sentence → first cause → a detail about that cause → the next cause.' },
+
+      { type: 'mc',
+        prompt: 'Situation: "Many people in Qatar use plastic water bottles every day." Which idea is NOT related to the situation?',
+        options: [
+          'Water boils at 100 °C.',
+          'Bottles are cheap and easy to buy.',
+          'More plastic ends up in the sea.',
+          'The weather is very hot, so people need a lot of water.'
+        ],
+        answer: 0,
+        explain: 'It is true, but it is not about plastic bottles. A sentence can be true and still be off-topic.' },
+
+      { type: 'gap',
+        prompt: 'Fix the mistake. Type the correct word.',
+        context: 'Wrong: The roads is very busy in the morning.',
+        text: 'Right: The roads [[are]] very busy in the morning.',
+        explain: 'Roads is plural (they), so use are.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 4 · Wednesday · starter for Module 5
+     Reviews: Module 4 (point + detail, the checklist, order words)
+     ================================================================ */
+  {
+    id: 'u1-q04', cycle: 1, day: 'Wed', module: 5,
+    moduleTitle: 'Plan Your Paragraph',
+    title: 'Inside a body paragraph',
+    reviews: 'Module 4: point + detail, what makes a good body paragraph, order words. Recycles Module 3.',
+    questions: [
+      { type: 'match',
+        prompt: 'A good body paragraph passes four checks. Match each check to its question.',
+        pairs: [
+          ['Clear topic sentence', 'Does it tell the reader the main idea?'],
+          ['A detail for every point', 'Does each point say how or why?'],
+          ['Nothing off-topic', 'Is every sentence about the topic?'],
+          ['Nothing repeated', 'Does each point say something new?']
+        ],
+        explain: 'Ask these four questions about any body paragraph, yours or a classmate’s.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'A point says [[what]]. A detail says how or [[why]].',
+        bank: ['what', 'why', 'where', 'who'],
+        explain: 'Point = what. Detail = how or why. An example makes the detail clear and real.' },
+
+      { type: 'sort',
+        prompt: 'Topic: not exercising enough. Is each sentence a point or a detail?',
+        bins: ['Point', 'Detail'],
+        items: [
+          ['One effect is weight gain.', 0],
+          ['The body stores extra fat.', 1],
+          ['A second effect is heart problems.', 0],
+          ['The heart must work harder.', 1],
+          ['A third effect is feeling tired.', 0],
+          ['Students find it hard to focus in class.', 1]
+        ],
+        explain: 'The points name the effects (One effect is ...). The details explain how or why.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'This paragraph has one off-topic sentence. Tap it.',
+        sentences: [
+          'Air pollution has several effects on people’s health.',
+          'One effect is breathing problems.',
+          'Dirty air can hurt the lungs, so some people cough a lot.',
+          'My uncle lives in a big city.',
+          'A second effect is sore eyes.',
+          'Smoke and dust in the air can make the eyes red and dry.'
+        ],
+        answer: [3],
+        explain: 'Where your uncle lives is not about the effects of air pollution. Cut it.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'This paragraph has one repeated point. Tap it.',
+        sentences: [
+          'Eating fast food every day has several effects on health.',
+          'One effect is weight gain.',
+          'Fast food has a lot of fat, so the body stores extra fat.',
+          'A second effect is heart problems.',
+          'Too much salt makes the heart work harder.',
+          'A third effect is that people get heavier.'
+        ],
+        answer: [5],
+        explain: '"People get heavier" is the same as weight gain. Each point must say something new.' },
+
+      { type: 'mc',
+        prompt: 'Read the paragraph. What is the problem?',
+        context: 'Sitting for many hours has several effects on young people. One effect is back pain. A second effect is weight gain. A third effect is poor sleep.',
+        options: ['The points have no details.', 'The topic sentence is not clear.', 'One sentence is off-topic.', 'One point is repeated.'],
+        answer: 0,
+        explain: 'There are three points, but no details. The reader asks: How? Why?' },
+
+      { type: 'gap',
+        prompt: 'Type the missing order words.',
+        text: 'One important effect is difficulty thinking clearly. A [[second]] effect is low energy. A [[third]] effect is poor health.',
+        bank: ['third', 'last', 'second', 'next'],
+        explain: 'One ... / A second ... / A third ... help the reader follow the points.' },
+
+      { type: 'mc',
+        prompt: 'Detail: "People feel tired and find it hard to focus." Which sentence is the best example?',
+        options: [
+          'For example, some students fall asleep in their first class.',
+          'For example, exercise is good for you.',
+          'For example, people feel tired.',
+          'For example, my phone is new.'
+        ],
+        answer: 0,
+        explain: 'A good example shows the detail in real life. Falling asleep in class shows that people are tired and cannot focus.' },
+
+      { type: 'mc',
+        prompt: 'Situation: "Many students use their phones late at night." Which idea is a CAUSE?',
+        options: [
+          'Friends send messages late at night.',
+          'Students feel tired in class the next day.',
+          'Students go to sleep later.',
+          'Their eyes feel dry in the morning.'
+        ],
+        answer: 0,
+        explain: 'Messages from friends come before, so they are a cause. The other ideas happen after: they are effects.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'People who {does} not sleep enough may feel weak.',
+        explain: 'People is plural, so use do: people who do not sleep enough.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 5 · Thursday · starter for Module 7
+     Reviews: Modules 5–6 (the writing process: brainstorm, choose, plan, draft)
+     ================================================================ */
+  {
+    id: 'u1-q05', cycle: 1, day: 'Thu', module: 7,
+    moduleTitle: 'Check and Improve',
+    title: 'Plan and write',
+    reviews: 'Modules 5–6: the writing process, choosing good ideas, planning and drafting a body paragraph.',
+    questions: [
+      { type: 'order',
+        prompt: 'Put the steps of the writing process in order. Tap them in order.',
+        items: [
+          'Brainstorm ideas.',
+          'Organize your ideas in a plan.',
+          'Write a first draft.',
+          'Edit and revise your draft.'
+        ],
+        explain: 'Good writers do not start with the draft. They brainstorm, organize, write, and then edit and revise.' },
+
+      { type: 'sort',
+        prompt: 'Topic: Many students use their phones for many hours every day. Is each idea a cause or an effect?',
+        bins: ['Cause', 'Effect'],
+        items: [
+          ['notifications', 0],
+          ['boredom', 0],
+          ['chatting with friends', 0],
+          ['tired eyes', 1],
+          ['neck and back pain', 1],
+          ['less time with family', 1]
+        ],
+        explain: 'Causes answer Why do students use their phones? Effects answer What happens?' },
+
+      { type: 'mc',
+        prompt: 'You are writing about the EFFECTS of using phones for many hours. Which idea should you NOT use?',
+        options: [
+          'Notifications make the phone ring all day.',
+          'Students sleep less.',
+          'Students’ eyes get tired.',
+          'Students spend less time with their family.'
+        ],
+        answer: 0,
+        explain: 'Notifications are a cause (why students use their phones), not an effect. An effects paragraph needs effects only.' },
+
+      { type: 'mc',
+        prompt: 'Your plan has four points. You need three. Which point should you cut?',
+        context: 'Topic: effects of using phones for many hours\n1  less sleep\n2  tired eyes\n3  sleeping less at night\n4  less exercise',
+        options: ['3  sleeping less at night', '1  less sleep', '2  tired eyes', '4  less exercise'],
+        answer: 0,
+        explain: '"Sleeping less at night" is the same as "less sleep". Cut the repeated idea and keep three different points.' },
+
+      { type: 'mc',
+        prompt: 'You chose effects. Which topic sentence is best?',
+        options: [
+          'Using phones for many hours has several effects on students.',
+          'There are several causes of phone use.',
+          'I use my phone every day.',
+          'Phones are very expensive.'
+        ],
+        answer: 0,
+        explain: 'It says the topic (using phones for many hours) and tells the reader the paragraph is about effects.' },
+
+      { type: 'match',
+        prompt: 'Match each part of the plan to an example from a paragraph about phones.',
+        pairs: [
+          ['Topic sentence', 'Using phones for many hours has several effects on students.'],
+          ['Point', 'One effect is less sleep.'],
+          ['Detail', 'Students use their phones in bed late at night, so they go to sleep late.']
+        ],
+        explain: 'Topic sentence = the main idea. Point = one effect. Detail = how or why.' },
+
+      { type: 'mc',
+        prompt: 'Point: "A second effect is tired eyes." Which detail explains this point best?',
+        options: [
+          'Students look at a bright screen for hours, so their eyes become dry and sore.',
+          'Eyes are very important.',
+          'Some students wear glasses.',
+          'Tired eyes is the second effect.'
+        ],
+        answer: 0,
+        explain: 'A good detail says how or why. Hours of bright screens explain why the eyes get tired.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'One point has no detail. Tap it.',
+        sentences: [
+          'Using phones for many hours has several effects on students.',
+          'One effect is less sleep.',
+          'Students use their phones in bed late at night, so they go to sleep late.',
+          'A second effect is tired eyes.',
+          'A third effect is less exercise.',
+          'Students sit with their phones instead of playing sports.'
+        ],
+        answer: [3],
+        explain: '"A second effect is tired eyes" has no detail after it. How or why do the eyes get tired?' },
+
+      { type: 'gap',
+        prompt: 'Fix the mistake. Type the correct word.',
+        context: 'Wrong: Many students uses their phones in bed.',
+        text: 'Right: Many students [[use]] their phones in bed.',
+        explain: 'Students is plural (they), so the verb has no -s: students use.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'Many {student} use their phones for many hours.',
+        explain: 'Many + plural noun: many students.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 6 · Sunday · starter for Module 8
+     Reviews: Module 7 (find problems and fix them) + Modules 1–4
+     ================================================================ */
+  {
+    id: 'u1-q06', cycle: 2, day: 'Sun', module: 8,
+    moduleTitle: 'Introducing Introductions',
+    title: 'Find it and fix it',
+    reviews: 'Module 7: finding problems in a body paragraph and fixing them. Recycles Modules 1–4.',
+    questions: [
+      { type: 'tap', mode: 'sentence',
+        prompt: 'This paragraph has one off-topic sentence. Tap it.',
+        sentences: [
+          'Plastic bags have several bad effects on the environment.',
+          'One effect is pollution in the sea.',
+          'Bags blow into the water, and fish and turtles eat them.',
+          'Many shops in Doha are open late at night.',
+          'A second effect is bigger landfills.',
+          'Plastic bags take a very long time to break down.'
+        ],
+        answer: [3],
+        explain: 'Shop opening times are not about the effects of plastic bags. Cut the sentence.' },
+
+      { type: 'match',
+        prompt: 'Match each problem to the best way to fix it.',
+        pairs: [
+          ['A sentence is off-topic.', 'Cut it.'],
+          ['A point has no detail.', 'Add a sentence that says how or why.'],
+          ['A point is repeated.', 'Change it to a new point.'],
+          ['The topic sentence is not clear.', 'Say the topic and causes or effects.']
+        ],
+        explain: 'First find the problem. Then choose the right fix: cut, add or change.' },
+
+      { type: 'mc',
+        prompt: 'This topic sentence is not clear. Which is the best new topic sentence?',
+        context: 'Phones are bad.',
+        options: [
+          'Using phones for many hours has three effects on students’ health.',
+          'Phones are very, very bad.',
+          'Many people have a phone.',
+          'In this paragraph, I will write about phones.'
+        ],
+        answer: 0,
+        explain: 'A clear topic sentence says the topic and tells the reader the paragraph is about causes or effects.' },
+
+      { type: 'mc',
+        prompt: 'This point has no detail. Which sentence is the best detail to add?',
+        context: 'A second effect is less exercise.',
+        options: [
+          'Students sit with their phones for hours instead of playing sports.',
+          'Exercise is good.',
+          'A third effect is less exercise.',
+          'My brother has a new phone.'
+        ],
+        answer: 0,
+        explain: 'The detail says how phones lead to less exercise: students sit instead of playing sports.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'This paragraph has TWO problems. Tap the off-topic sentence and the repeated sentence.',
+        sentences: [
+          'Hot weather has several effects on daily life in Qatar.',
+          'One effect is that people stay inside in the afternoon.',
+          'It is too hot to walk, so people go to malls.',
+          'My favourite mall has a big cinema.',
+          'A second effect is high electricity use.',
+          'Air conditioners run all day and all night.',
+          'Also, people stay inside in the afternoon.'
+        ],
+        answer: [3, 6],
+        explain: 'The cinema is off-topic. "People stay inside in the afternoon" is repeated.' },
+
+      { type: 'mc',
+        prompt: 'Read the paragraph. What is the best way to fix the last sentence?',
+        context: 'Eating fast food every day has several effects on health. One effect is weight gain. Fast food has a lot of fat. A second effect is heart problems. Too much salt makes the heart work harder. A third effect is that people get heavier.',
+        options: [
+          'Change it to a new point, such as low energy.',
+          'Start it with "Also".',
+          'Make the sentence longer.',
+          'Move it to the start of the paragraph.'
+        ],
+        answer: 0,
+        explain: '"People get heavier" repeats weight gain. Change it to a new point, or cut it.' },
+
+      { type: 'gap',
+        prompt: 'Fix the mistake. Type the correct word.',
+        context: 'Wrong: Phones at night can hurts students’ sleep.',
+        text: 'Right: Phones at night can [[hurt]] students’ sleep.',
+        explain: 'After can, use the base verb: can hurt.' },
+
+      { type: 'sort',
+        prompt: 'Read the situation. Is each idea a cause, an effect, or not related?',
+        context: 'SITUATION: Many families in Qatar use air conditioning all day in summer.',
+        bins: ['Cause', 'Effect', 'Not related'],
+        items: [
+          ['Summer temperatures are often over 40 °C.', 0],
+          ['Houses get very hot in the afternoon.', 0],
+          ['Electricity bills go up.', 1],
+          ['Power stations burn more gas.', 1],
+          ['Football is very popular in Qatar.', 2]
+        ],
+        explain: 'Heat comes before (causes). Higher bills and more gas come after (effects). Football is not related.' },
+
+      { type: 'mc',
+        prompt: 'An effects essay answers which question?',
+        options: ['What happens?', 'Why does it happen?', 'Where does it happen?', 'Who does it?'],
+        answer: 0,
+        explain: 'Effects = What happens? Causes = Why?' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'Air conditioners {runs} all day in the summer.',
+        explain: 'Air conditioners is plural (they), so the verb has no -s: they run.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 7 · Monday · starter for Module 9
+     Reviews: Module 8 (hook, linking sentences, thesis; general to specific)
+     ================================================================ */
+  {
+    id: 'u1-q07', cycle: 2, day: 'Mon', module: 9,
+    moduleTitle: 'The Thesis Statement',
+    title: 'Inside the introduction',
+    reviews: 'Module 8: the three parts of an introduction, general to specific, and an introduction that fits its body. Recycles Modules 3 and 7.',
+    questions: [
+      { type: 'match',
+        prompt: 'Match each part of an introduction to its job.',
+        pairs: [
+          ['Hook', 'gets the reader interested in the topic.'],
+          ['Linking sentences', 'link the hook to the thesis and make the topic smaller.'],
+          ['Thesis statement', 'tells the reader what the whole essay is about.']
+        ],
+        explain: 'Hook → linking sentences → thesis statement.' },
+
+      { type: 'sort',
+        prompt: 'These sentences are about exercise. Which part of the essay is each one?',
+        bins: ['Hook', 'Linking sentence', 'Thesis statement', 'Body (not the introduction)'],
+        items: [
+          ['Every evening, the parks in Doha are almost empty.', 0],
+          ['Many young people stay at home after school.', 1],
+          ['They sit in front of screens for hours.', 1],
+          ['Not exercising enough has several effects on young people’s health.', 2],
+          ['A second effect is weak muscles.', 3]
+        ],
+        explain: 'The hook opens the topic. The linking sentences make it smaller. The thesis gives the main idea. "A second effect is ..." is a point from the body.' },
+
+      { type: 'order',
+        prompt: 'Put the introduction in order, from general to specific. Tap the sentences in order.',
+        items: [
+          'It is two o’clock in the morning, and a student is still awake with a can of energy drink beside her laptop.',
+          'Today, these drinks are cheap and easy to buy in every shop.',
+          'Because of this, many young people drink two or three cans a day.',
+          'Drinking too many energy drinks has several bad effects on young people.'
+        ],
+        explain: 'Hook first. Each linking sentence makes the topic smaller (these drinks → because of this). The thesis comes last.' },
+
+      { type: 'tap', mode: 'sentence',
+        prompt: 'Read the introduction. Tap the TWO linking sentences.',
+        sentences: [
+          'Walk along almost any beach in Qatar, and you will probably see an empty plastic bottle.',
+          'The weather is very hot, so people drink a lot of water, and much of it comes in plastic bottles.',
+          'Most people use a bottle once and then throw it away.',
+          'Using plastic water bottles every day has several bad effects on the environment.'
+        ],
+        answer: [1, 2],
+        explain: 'Sentence 1 is the hook and sentence 4 is the thesis. The two sentences in the middle link them.' },
+
+      { type: 'mc',
+        prompt: 'An introduction usually moves from ...',
+        options: [
+          'general ideas to the specific main idea.',
+          'the main idea to general ideas.',
+          'the conclusion to the body.',
+          'examples to the topic sentence.'
+        ],
+        answer: 0,
+        explain: 'Start with a general idea about the topic. Each sentence makes the topic smaller, until the thesis.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing word.',
+        text: 'The thesis statement is like a [[topic]] sentence for the whole essay.',
+        bank: ['topic', 'concluding', 'first', 'linking'],
+        explain: 'A topic sentence gives the main idea of a paragraph. The thesis gives the main idea of the whole essay.' },
+
+      { type: 'mc',
+        prompt: 'The body paragraph starts like this. Which thesis fits the essay?',
+        context: 'BODY: Plastic water bottles have three main effects on the environment. The first effect is more plastic in the sea ...',
+        options: [
+          'Using plastic water bottles every day has several bad effects on the environment.',
+          'There are several reasons why people in Qatar buy so much bottled water.',
+          'Many people like cold water on a hot day.',
+          'Plastic bottles are cheap and easy to buy.'
+        ],
+        answer: 0,
+        explain: 'The body explains effects, so the thesis must promise effects. "Reasons why" promises causes, so it does not fit.' },
+
+      { type: 'mc',
+        prompt: 'Thesis: "There are several reasons why many young people in Qatar do not exercise enough." What will the essay explain?',
+        options: ['Causes', 'Effects'],
+        answer: 0,
+        explain: 'Reasons why = causes. The essay answers the question Why?' },
+
+      { type: 'gap',
+        prompt: 'Fix the mistake. Type the correct word.',
+        context: 'Wrong: The linking sentences makes the topic smaller.',
+        text: 'Right: The linking sentences [[make]] the topic smaller.',
+        explain: 'Linking sentences is plural (they), so the verb has no -s: they make.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'The hook {get} the reader interested in the topic.',
+        explain: 'The hook = it, so the verb needs -s: the hook gets.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 8 · Tuesday · starter for Module 11
+     Reviews: Modules 9–10 (roadmap thesis; Picture, Fact and Question hooks)
+     ================================================================ */
+  {
+    id: 'u1-q08', cycle: 2, day: 'Tue', module: 11,
+    moduleTitle: 'Build the Bridge',
+    title: 'Thesis and hook',
+    reviews: 'Modules 9–10: the roadmap thesis (topic + causes or effects + the map) and three kinds of hook. Recycles Module 4.',
+    questions: [
+      { type: 'mc',
+        prompt: 'What does a roadmap thesis tell the reader?',
+        options: [
+          'The topic, causes or effects, and the main points of the body',
+          'Only the topic of the essay',
+          'A question for the reader to answer',
+          'The final thought of the essay'
+        ],
+        answer: 0,
+        explain: 'A roadmap thesis has three parts: the topic, causes or effects, and the map (the main points in body order).' },
+
+      { type: 'mc',
+        prompt: 'Which is the best roadmap thesis for an effects essay about energy drinks?',
+        options: [
+          'Drinking too many energy drinks can lead to poor sleep, a fast heartbeat and weak teeth.',
+          'Energy drinks are popular with young people.',
+          'In this essay, I will write about energy drinks.',
+          'Why do young people drink energy drinks?'
+        ],
+        answer: 0,
+        explain: 'It has the topic, effects (can lead to) and a map of three points. The others are only a fact, "In this essay, I will ...", or a question.' },
+
+      { type: 'match',
+        prompt: 'Each sentence is not a good thesis. Match it to its problem.',
+        pairs: [
+          ['Many people in Doha drive to work.', 'It is only a fact.'],
+          ['In this essay, I will write about traffic.', 'It says "In this essay, I will ..."'],
+          ['Why is traffic so heavy in the morning?', 'It is a question.'],
+          ['Traffic is a big problem.', 'It is too general. It has no causes or effects.']
+        ],
+        explain: 'A good thesis is a statement with a topic, causes or effects, and a map.' },
+
+      { type: 'mc',
+        prompt: 'The body paragraph explains these effects in this order: less sleep, tired eyes, less exercise. Which thesis is the best map?',
+        options: [
+          'Using phones for many hours can lead to less sleep, tired eyes and less exercise.',
+          'Using phones for many hours can lead to less exercise, tired eyes and less sleep.',
+          'Using phones for many hours can lead to less sleep, tired eyes and high phone bills.',
+          'Using phones for many hours has several effects on students.'
+        ],
+        answer: 0,
+        explain: 'The thesis is a promise: the same points in the same order. No new points and no missing points.' },
+
+      { type: 'sort',
+        prompt: 'The essay is about traffic. What kind of hook is each sentence?',
+        bins: ['Picture', 'Fact', 'Question', 'Not a good hook'],
+        items: [
+          ['It is seven o’clock in the morning, and the road to the university is full of cars.', 0],
+          ['Imagine a long line of cars under the hot afternoon sun.', 0],
+          ['Many people in Qatar drive to work every day.', 1],
+          ['Have you ever waited twenty minutes at one traffic light?', 2],
+          ['In this essay, I will write about traffic.', 3],
+          ['The dictionary says that traffic is cars on a road.', 3]
+        ],
+        explain: 'Picture = a place or a moment you can see. Fact = something most people know is true. Question = makes you think of an answer.' },
+
+      { type: 'mc',
+        prompt: 'This fact hook is weak. Why?',
+        context: 'Scientists say 99% of students sleep only three hours a night.',
+        options: [
+          'Most people do not know if it is true. The number may be made up.',
+          'It is too short.',
+          'It is about sleep.',
+          'It does not have a question mark.'
+        ],
+        answer: 0,
+        explain: 'A fact hook tells the reader something most people know is true. Do not use numbers you cannot check.' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'A good hook is about the [[topic]] and makes the reader want to keep [[reading]].',
+        bank: ['reading', 'title', 'topic', 'writing'],
+        explain: 'A good hook is about the topic and makes the reader want to keep reading.' },
+
+      { type: 'mc',
+        prompt: 'Topic: effects of eating too much sugar. Which hook is best?',
+        options: [
+          'After school, a child opens a big bag of sweets and eats it all before dinner.',
+          'Sugar is something in food.',
+          'In this essay, I will talk about sugar.',
+          'The dictionary says that sugar is a sweet food.'
+        ],
+        answer: 0,
+        explain: 'It is a picture hook: the reader can see the moment. The others are boring, too general, or a dictionary definition.' },
+
+      { type: 'mc',
+        prompt: 'Point: "One cause is long study nights." Which sentence is a detail for this point?',
+        options: [
+          'Before exams, students study late and drink energy drinks to stay awake.',
+          'Another cause is low prices.',
+          'Long study nights is a cause.',
+          'Energy drinks come in many colours.'
+        ],
+        answer: 0,
+        explain: 'The detail explains how long study nights lead to energy drinks.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'A roadmap thesis {tell} the reader the main points.',
+        explain: 'A thesis = it, so the verb needs -s: a thesis tells.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 9 · Wednesday · starter for Module 12
+     Reviews: Module 11 (linking sentences: link back, make it smaller, lead in)
+     ================================================================ */
+  {
+    id: 'u1-q09', cycle: 2, day: 'Wed', module: 12,
+    moduleTitle: 'Plan Your Introduction',
+    title: 'Build the bridge',
+    reviews: 'Module 11: the three jobs of linking sentences and words that point back (this, these, they). Recycles Modules 3 and 10.',
+    questions: [
+      { type: 'match',
+        prompt: 'Linking sentences have three jobs. Match each job to what it does.',
+        pairs: [
+          ['Link back', 'uses a word or idea from the hook.'],
+          ['Make it smaller', 'says who, where or what the problem is.'],
+          ['Lead in', 'gets the reader ready for the thesis.']
+        ],
+        explain: 'Linking sentences link the hook to the thesis and make the topic smaller.' },
+
+      { type: 'order',
+        prompt: 'These are the linking sentences for one introduction. Put them in order. Tap them in order.',
+        context: 'HOOK: It is seven o’clock in the morning, and the road to the university is full of cars.\nTHESIS: Heavy traffic can make people late, cause stress and pollute the air.',
+        items: [
+          'Most of these cars carry only one person.',
+          'Because of this, there are more cars than the roads can hold.',
+          'These long, slow trips are now a normal part of life in Doha.'
+        ],
+        explain: 'Look for words that point back: these cars → the hook; this → one person in each car; these long, slow trips → too many cars.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Tap the word that points back to "plastic bottles".',
+        text: 'People buy plastic bottles every day. However, most of {them} are thrown away after one use.',
+        explain: 'Them = the plastic bottles. Words like this, these, they and them connect sentences.' },
+
+      { type: 'gap',
+        prompt: 'Fill the gap with This, These, or They.',
+        text: 'Students stay up late on their phones. [[This|That]] makes them tired the next day.',
+        bank: ['These', 'They', 'This'],
+        explain: 'This = the whole idea before it (staying up late). This + makes (singular).' },
+
+      { type: 'mc',
+        prompt: 'Choose the best linking sentences for this introduction.',
+        context: 'HOOK: It is two o’clock in the morning, and a student is still awake with a can of energy drink beside her laptop.\n???\nTHESIS: Drinking too many energy drinks can lead to poor sleep, a fast heartbeat and weak teeth.',
+        options: [
+          'Today, many students drink energy drinks to study late. Some drink two or three cans every day.',
+          'Energy drinks keep people awake and make the heart beat fast. The sugar also hurts teeth.',
+          'Laptops are expensive. Many students buy a new one every year.',
+          'It is two o’clock in the morning. The student is still awake.'
+        ],
+        answer: 0,
+        explain: 'It links back (energy drinks), makes the topic smaller (students, two or three cans) and leads in. The second option gives away the effects, the third is off-topic, and the fourth repeats the hook.' },
+
+      { type: 'mc',
+        prompt: 'What is wrong with this introduction?',
+        context: 'It is nine o’clock at night in Doha, and the park is almost empty. Long school days, too much screen time and hot weather are three main reasons why many young people in Qatar do not exercise enough.',
+        options: [
+          'It jumps from the hook to the thesis. It needs linking sentences.',
+          'It has no thesis statement.',
+          'It has too many linking sentences.',
+          'The thesis has no map.'
+        ],
+        answer: 0,
+        explain: 'There is no bridge between the hook and the thesis. Add two linking sentences.' },
+
+      { type: 'mc',
+        prompt: 'Topic: why young people do not exercise enough. Which sentence should NOT be a linking sentence?',
+        options: [
+          'The first reason is long school days, the second is screen time and the third is hot weather.',
+          'Many young people stay at home after school.',
+          'They spend hours in front of screens.',
+          'This is a problem for their health.'
+        ],
+        answer: 0,
+        explain: 'Do not explain your three main points in the linking sentences. Save them for the thesis and the body.' },
+
+      { type: 'mc',
+        prompt: 'What kind of hook is this?',
+        context: 'Imagine a classroom where every student is looking at a phone.',
+        options: ['Picture', 'Fact', 'Question', 'Not a good hook'],
+        fixed: true,
+        answer: 0,
+        explain: 'It helps the reader see a place or a moment, so it is a picture hook.' },
+
+      { type: 'sort',
+        prompt: 'Read the situation. Is each idea a cause, an effect, or not related?',
+        context: 'SITUATION: Many people in Qatar now buy electric cars.',
+        bins: ['Cause', 'Effect', 'Not related'],
+        items: [
+          ['Electric cars do not need petrol.', 0],
+          ['People want cleaner air.', 0],
+          ['There is less smoke from cars in the city.', 1],
+          ['More charging stations are built.', 1],
+          ['The first cars were made more than 100 years ago.', 2]
+        ],
+        explain: 'Causes = why people buy them. Effects = what happens next. The history of cars is not related.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Spot the mistake. Tap the wrong word.',
+        text: 'These {bottle} are used only once.',
+        explain: 'These + plural noun: these bottles.' }
+    ]
+  },
+
+  /* ================================================================
+     QUIZ 10 · Thursday · starter for Module 14 (CAPP 1)
+     Reviews: Modules 12–13 (plan and write an introduction) + the whole unit
+     ================================================================ */
+  {
+    id: 'u1-q10', cycle: 2, day: 'Thu', module: 14,
+    moduleTitle: 'CAPP 1: Pause and Think',
+    title: 'Unit 1 review',
+    reviews: 'Modules 12–13: planning an introduction backwards from the body paragraph. Recycles the whole unit.',
+    questions: [
+      { type: 'mc',
+        prompt: 'You are planning an introduction for your body paragraph. What should you plan first?',
+        options: ['The thesis statement', 'The hook', 'The linking sentences', 'The final thought'],
+        answer: 0,
+        explain: 'Plan backwards. The thesis comes from your body paragraph, so start with it. Then choose a hook, and build the bridge last.' },
+
+      { type: 'mc',
+        prompt: 'A body paragraph has these three effects, in this order: high electricity bills, more air pollution, less time outside. Which thesis is best?',
+        options: [
+          'Using air conditioning all day can lead to high electricity bills, more air pollution and less time outside.',
+          'Using air conditioning all day can lead to less time outside, high electricity bills and more air pollution.',
+          'Using air conditioning all day can lead to high electricity bills, more air pollution and colds.',
+          'Air conditioning is very common in Qatar.'
+        ],
+        answer: 0,
+        explain: 'The thesis maps the same three points in the same order as the body paragraph.' },
+
+      { type: 'gap',
+        prompt: 'Complete the effects thesis. Type the missing word.',
+        text: 'Eating fast food every day can [[lead]] to weight gain, heart problems and low energy.',
+        bank: ['because', 'reason', 'lead', 'cause'],
+        explain: 'Effects frame: ... can lead to ___, ___ and ___. Causes frame: ___, ___ and ___ are three main reasons why ...' },
+
+      { type: 'order',
+        prompt: 'These sentences come from one short essay. Put them in order. Tap them in order.',
+        items: [
+          'Most students carry a phone everywhere they go.',
+          'They use it in class, at home and even in bed.',
+          'Using phones for many hours can lead to less sleep, tired eyes and less exercise.',
+          'There are three main effects of using phones for many hours.',
+          'One effect is less sleep.',
+          'In conclusion, long phone use can hurt students’ sleep, eyes and health.'
+        ],
+        explain: 'Hook → linking sentence → thesis (introduction) → topic sentence → first point (body) → conclusion.' },
+
+      { type: 'sort',
+        prompt: 'Put each sentence in the correct part of the essay.',
+        bins: ['Introduction', 'Body', 'Conclusion'],
+        items: [
+          ['It is midnight, and a student is still looking at a bright screen.', 0],
+          ['Using phones for many hours can lead to less sleep, tired eyes and less exercise.', 0],
+          ['A second effect is tired eyes.', 1],
+          ['Bright screens can make the eyes dry and sore.', 1],
+          ['Students should put their phones away one hour before bed.', 2]
+        ],
+        explain: 'Hook and thesis = introduction. Point and detail = body. A final thought = conclusion.' },
+
+      { type: 'match',
+        prompt: 'Match each word to its meaning.',
+        pairs: [
+          ['Topic sentence', 'gives the main idea of one paragraph.'],
+          ['Thesis statement', 'gives the main idea of the whole essay and maps the body.'],
+          ['Hook', 'gets the reader interested in the topic.'],
+          ['Linking sentences', 'link the hook to the thesis.'],
+          ['Detail', 'says how or why.']
+        ],
+        explain: 'You learned all these words in Unit 1.' },
+
+      { type: 'mc',
+        prompt: 'Read the start of the essay. What is the problem?',
+        context: 'THESIS: There are several reasons why many students use their phones for many hours.\nBODY: There are three main effects of using phones for many hours. One effect is less sleep ...',
+        options: [
+          'The thesis promises causes, but the body explains effects.',
+          'The body has no topic sentence.',
+          'The thesis is a question.',
+          'There is no problem.'
+        ],
+        answer: 0,
+        explain: 'The thesis is a promise. If the body explains effects, the thesis must promise effects too.' },
+
+      { type: 'tap', mode: 'word',
+        prompt: 'Find TWO mistakes. Tap the two wrong words.',
+        text: 'Many {student} use their phones late at night. This {make} them tired in class.',
+        explain: 'Many students (plural). This makes (this = it, so add -s).' },
+
+      { type: 'gap',
+        prompt: 'Type the missing words.',
+        text: 'A cause comes [[before]]. An effect comes [[after]].',
+        bank: ['after', 'before', 'later', 'first'],
+        explain: 'Before = cause (Why?). After = effect (What happens?).' },
+
+      { type: 'mc',
+        prompt: 'Which writing goal is the most useful for next time?',
+        options: [
+          'I will give every point a detail and one example.',
+          'I will write better.',
+          'I will write more words.',
+          'I will try hard.'
+        ],
+        answer: 0,
+        explain: 'A useful goal is clear. You can check it in your next writing: Does every point have a detail and an example?' }
+    ]
+  }
+  ]
+};
+
+</script>
+<script>
+/* ===== Teacher hub ===== */
+/* W002 Review Quizzes — teacher hub (one site for all units). */
+window.W002.run_hub = function () {
+  'use strict';
+  var W = window.W002, esc = W.esc;
+  var app = document.getElementById('app');
+  var unitIds = Object.keys(W.units);
+  var RESULTS_URL = (W.CONFIG.resultsURL || '').trim();
+  var settings = W.store.get('w002:hub:settings', {}) || {};
+  if (!settings.unit || !W.units[settings.unit]) settings.unit = unitIds[0];
+  function saveSettings() { W.store.set('w002:hub:settings', settings); }
+
+  var baseURL = new URL(W.PAGE, location.href.split('#')[0].split('?')[0]).href;
+  function quizURL(id, section) {
+    return baseURL + '?q=' + encodeURIComponent(id) + (section ? '&s=' + encodeURIComponent(section) : '');
+  }
+
+  /* ---------------------------------------------------------------- page */
+  function render() {
+    var unit = W.units[settings.unit];
+    var html = '<header class="band"><div><h1>Review Quizzes</h1>' +
+      '<p class="sub">W002 Writing Workshop · starter quizzes for every class</p></div>' +
+      '<span class="pill navy" style="margin-top:6px">TEACHER HUB</span></header><main class="wrap">';
+
+    if (location.protocol === 'file:') {
+      html += '<div class="notice-bar"><b>You opened this file from your computer.</b> The QR codes only work on students’ phones when the hub is online (for example on GitHub Pages).</div>';
+    }
+
+    /* How to use: short, always the same place */
+    html += '<details class="howto"' + (settings.howtoClosed ? '' : ' open') + ' id="howto"><summary>How to use the quizzes</summary><ol>' +
+      '<li>Type your <b>section</b> below. The hub remembers it on this computer.</li>' +
+      '<li>Choose the unit. Find the <b>module you are teaching today</b> and press <b>Show QR code</b>.</li>' +
+      '<li>Students scan the code with their phone, type their name and do the 10 questions. They see their score and the answers at the end.</li>' +
+      (RESULTS_URL ? '<li>Press <b>Results</b> to see your students’ answers while they work or after they finish.</li>' : '') +
+      '</ol><p class="hub-help">Want to check a quiz first? Press <b>Preview</b> (nothing is saved) or <b>Answers</b> (a printable answer key).</p></details>';
+
+    html += '<div class="hub-settings">' +
+      '<div class="field"><label for="sec">Your section</label><input id="sec" type="text" maxlength="24" placeholder="e.g. Section 12" value="' + esc(settings.section || '') + '"></div>' +
+      (RESULTS_URL ? '<div class="field"><label for="pin">Teacher PIN (for results)</label><input id="pin" type="password" inputmode="numeric" maxlength="20" autocomplete="off" value="' + esc(settings.pin || '') + '"></div>' : '') +
+      '</div>';
+
+    /* Unit tabs */
+    html += '<nav class="unit-tabs" role="tablist" aria-label="Units">' + unitIds.map(function (id) {
+      var u = W.units[id], on = id === settings.unit;
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="unit-tab' + (on ? ' on' : '') + '" data-unit="' + esc(id) + '">' +
+        '<span class="ut-title">' + esc(u.title) + '</span><span class="ut-sub">' + esc(u.subtitle) + '</span></button>';
+    }).join('') + '</nav>';
+
+    unit.cycles.forEach(function (cy) {
+      var qs = unit.quizzes.filter(function (q) { return q.cycle === cy.n; });
+      html += '<section class="cycle"><div class="cycle-head"><h2>' + esc(cy.label) + '</h2><span class="goal">' + esc(cy.goal) + '</span></div><div class="days">';
+      qs.forEach(function (q) {
+        html += '<article class="card" id="card-' + esc(q.id) + '">' +
+          '<div class="top"><span class="modnum">MODULE ' + q.module + '</span><span class="day">' + esc(W.DAY_NAMES[q.day]) + '</span></div>' +
+          '<div class="module">' + esc(q.moduleTitle) + '</div>' +
+          '<h3>' + esc(q.title) + '</h3>' +
+          '<p class="reviews">' + esc(q.reviews) + '</p>' +
+          '<div class="actions"><button class="btn primary" type="button" data-qr="' + esc(q.id) + '">Show QR code</button>' +
+          (RESULTS_URL ? '<button class="btn navy small wide" type="button" data-res="' + esc(q.id) + '">Results</button>' : '') +
+          '<a class="btn small" href="' + W.PAGE + '?q=' + esc(q.id) + '&mode=preview">Preview</a>' +
+          '<a class="btn small" href="' + W.PAGE + '?q=' + esc(q.id) + '&mode=key">Answers</a></div>' +
+          '</article>';
+      });
+      html += '</div></section>';
+    });
+
+    html += '</main><footer class="footer">Students see their score and the answers only when they finish. ' +
+      (RESULTS_URL ? 'Results go to the course Google Sheet. ' : 'Answers are saved on the student’s device only. ') +
+      'QR codes are made in your browser (QRCode for JavaScript, © Kazuhiko Arase, MIT licence).</footer>' +
+      '<div class="qr-screen" id="qr" role="dialog" aria-modal="true" aria-label="Quiz QR code"></div>' +
+      '<div class="res-screen" id="res" role="dialog" aria-modal="true" aria-label="Quiz results"></div>';
+    app.innerHTML = html;
+
+    var sec = document.getElementById('sec');
+    sec.addEventListener('input', function () { settings.section = sec.value.trim(); saveSettings(); });
+    var pin = document.getElementById('pin');
+    if (pin) pin.addEventListener('input', function () { settings.pin = pin.value.trim(); saveSettings(); });
+    var how = document.getElementById('howto');
+    how.addEventListener('toggle', function () { settings.howtoClosed = !how.open; saveSettings(); });
+    app.querySelectorAll('[data-unit]').forEach(function (b) {
+      b.addEventListener('click', function () { settings.unit = b.getAttribute('data-unit'); saveSettings(); render(); });
+    });
+    app.querySelectorAll('[data-qr]').forEach(function (b) { b.addEventListener('click', function () { openQR(b.getAttribute('data-qr')); }); });
+    app.querySelectorAll('[data-res]').forEach(function (b) { b.addEventListener('click', function () { openResults(b.getAttribute('data-res')); }); });
+  }
+
+  /* ---------------------------------------------------------------- QR display (shown to students) */
+  var timerId = null, lastFocus = null;
+  function openQR(id) {
+    var f = W.findQuiz(id); if (!f) return;
+    var q = f.quiz, s = settings.section || '';
+    var url = quizURL(id, s);
+    var el = document.getElementById('qr');
+    lastFocus = document.activeElement;
+
+    el.innerHTML = '<div class="qr-inner"><div class="qr-card"><canvas id="qrc" aria-label="QR code for the quiz"></canvas></div>' +
+      '<div class="qr-text"><h2>Starter quiz</h2>' +
+      '<p class="lead">Scan the QR code and start the quiz.</p>' +
+      '<p class="meta"><span class="quizname">' + esc(q.title) + '</span> · Module ' + q.module + '</p>' +
+      (s ? '<p class="meta">' + esc(s) + '</p>' : '') +
+      '<div class="timer" id="timer" aria-live="polite"></div>' +
+      '<div class="qr-tools">' +
+      '<button class="btn primary" type="button" id="t-start">Start 5:00 timer</button>' +
+      '<button class="btn" type="button" id="t-full">Full screen</button>' +
+      (RESULTS_URL ? '<button class="btn" type="button" id="t-res">Results</button>' : '') +
+      '<button class="btn" type="button" id="t-copy">Copy link</button>' +
+      '<button class="btn" type="button" id="t-dl">Download QR</button>' +
+      '<button class="btn" type="button" id="t-close">Close</button></div>' +
+      '<p class="link">' + esc(url) + '</p></div></div>';
+    W.drawQR(document.getElementById('qrc'), url, { scale: 14 });
+    el.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('t-close').focus();
+
+    document.getElementById('t-close').onclick = closeQR;
+    document.getElementById('t-copy').onclick = function () { copy(url, this); };
+    document.getElementById('t-dl').onclick = function () {
+      W.download(W.drawQR(document.createElement('canvas'), url, { scale: 16, caption: q.title + (s ? ' · ' + s : '') }), id + (s ? '-' + s.replace(/\W+/g, '') : '') + '.png');
+    };
+    document.getElementById('t-full').onclick = function () {
+      if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen();
+    };
+    document.getElementById('t-start').onclick = function () { startTimer(300, this); };
+    var tr = document.getElementById('t-res');
+    if (tr) tr.onclick = function () { closeQR(); openResults(id); };
+  }
+  function closeQR() {
+    var el = document.getElementById('qr');
+    if (document.fullscreenElement) document.exitFullscreen();
+    el.classList.remove('open'); el.innerHTML = '';
+    document.body.style.overflow = '';
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (lastFocus) lastFocus.focus();
+  }
+  function startTimer(total, btn) {
+    var t = document.getElementById('timer'), left = total;
+    if (timerId) clearInterval(timerId);
+    t.classList.add('on'); t.classList.remove('low');
+    btn.textContent = 'Restart timer';
+    function show() {
+      var m = Math.floor(left / 60), s = left % 60;
+      t.textContent = left > 0 ? m + ':' + String(s).padStart(2, '0') : 'Time!';
+      t.classList.toggle('low', left <= 60);
+    }
+    show();
+    timerId = setInterval(function () { left--; show(); if (left <= 0) { clearInterval(timerId); timerId = null; } }, 1000);
+  }
+  function copy(text, btn) {
+    function done() { var o = btn.textContent; btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = o; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { window.prompt('Copy this link:', text); });
+    else window.prompt('Copy this link:', text);
+  }
+
+  /* ---------------------------------------------------------------- results (teacher only) */
+  var resTimer = null, resState = null;
+  function openResults(id) {
+    var f = W.findQuiz(id); if (!f || !RESULTS_URL) return;
+    lastFocus = document.activeElement;
+    resState = { quiz: f.quiz, when: 'today', mine: !!settings.section, open: {} };
+    var el = document.getElementById('res');
+    el.classList.add('open'); document.body.style.overflow = 'hidden';
+    drawResults(null, 'Loading results ...');
+    loadResults();
+    resTimer = setInterval(loadResults, 10000);
+  }
+  function closeResults() {
+    var el = document.getElementById('res');
+    el.classList.remove('open'); el.innerHTML = '';
+    document.body.style.overflow = '';
+    if (resTimer) { clearInterval(resTimer); resTimer = null; }
+    if (lastFocus) lastFocus.focus();
+  }
+  function startOfToday() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+  function loadResults() {
+    if (!resState) return;
+    if (!settings.pin) { drawResults(null, 'Type the teacher PIN on the hub page, then open Results again.'); return; }
+    var u = RESULTS_URL + (RESULTS_URL.indexOf('?') >= 0 ? '&' : '?') + 'action=results' +
+      '&quiz=' + encodeURIComponent(resState.quiz.id) + '&pin=' + encodeURIComponent(settings.pin) +
+      (resState.when === 'today' ? '&since=' + startOfToday() : '') +
+      (resState.mine && settings.section ? '&section=' + encodeURIComponent(settings.section) : '');
+    fetch(u).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) drawResults(null, d.error === 'pin' ? 'The teacher PIN is not correct. Check it on the hub page.' : 'The results could not load: ' + (d.error || 'unknown error'));
+      else drawResults(d.rows || [], '');
+    }).catch(function () { drawResults(null, 'The results could not load. Check the internet connection.'); });
+  }
+  function drawResults(rows, message) {
+    var el = document.getElementById('res'), q = resState.quiz, Q = q.questions;
+    var keep = el.querySelector('.res-body'), scroll = keep ? keep.scrollTop : 0;
+    var html = '<div class="res-inner"><div class="res-head"><div><p class="label" style="margin:0">Results</p><h2>' + esc(q.title) + '</h2>' +
+      '<p class="sub" style="margin:0">Module ' + q.module + (resState.mine && settings.section ? ' · ' + esc(settings.section) : ' · all sections') + '</p></div>' +
+      '<button class="btn" type="button" id="r-close">Close</button></div>' +
+      '<div class="res-filters">' +
+      '<label><input type="radio" name="rw" value="today"' + (resState.when === 'today' ? ' checked' : '') + '> Today</label>' +
+      '<label><input type="radio" name="rw" value="all"' + (resState.when === 'all' ? ' checked' : '') + '> All results</label>' +
+      (settings.section ? '<label><input type="checkbox" id="r-mine"' + (resState.mine ? ' checked' : '') + '> Only ' + esc(settings.section) + '</label>' : '') +
+      '<span class="res-upd">' + (rows ? 'Updated ' + new Date().toLocaleTimeString('en-GB') + ' · updates every 10 seconds' : '') + '</span></div><div class="res-body">';
+
+    if (!rows) html += '<p>' + esc(message) + '</p>';
+    else if (!rows.length) html += '<p>No results yet. When students start the quiz, their names appear here.</p>';
+    else {
+      rows.sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+      var done = rows.filter(function (r) { return r.status === 'finished'; });
+      var avg = done.length ? (done.reduce(function (s, r) { return s + (+r.score || 0); }, 0) / done.length) : 0;
+      html += '<div class="res-summary"><span class="pill navy">' + rows.length + ' started</span><span class="pill">' + done.length + ' finished</span>' +
+        (done.length ? '<span class="pill">Average ' + avg.toFixed(1) + ' / 10</span>' : '') + '</div>';
+      html += '<div class="res-scroll"><table class="res-table"><thead><tr><th>Name</th><th>Status</th><th>Score</th>';
+      Q.forEach(function (_, i) { html += '<th class="qcol">Q' + (i + 1) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      rows.forEach(function (r) {
+        var fin = r.status === 'finished', marks = String(r.marks || '');
+        html += '<tr><td><button type="button" class="res-name" data-att="' + esc(r.attempt) + '">' + esc(r.name) + '</button>' + (resState.mine ? '' : '<div class="res-sec">' + esc(r.section || '') + '</div>') + '</td>' +
+          '<td>' + (fin ? 'Finished' + (r.seconds ? ' <span class="res-sec">' + Math.round(r.seconds / 60) + ' min</span>' : '') : 'Answering ' + (r.answered || 0) + '/10') + '</td>' +
+          '<td><b>' + (fin ? esc(r.score) + '/10' : '') + '</b></td>';
+        Q.forEach(function (_, i) {
+          var m = marks.charAt(i);
+          html += '<td class="qcell ' + (m === '1' ? 'ok' : m === '~' ? 'part' : m === '0' ? 'no' : '') + '">' + (m === '1' ? '✓' : m === '~' ? '~' : m === '0' ? '✗' : '') + '</td>';
+        });
+        html += '</tr>';
+        if (resState.open[r.attempt] && fin && r.answers) {
+          var ans = r.answers; if (typeof ans === 'string') { try { ans = JSON.parse(ans); } catch (e) { ans = []; } }
+          html += '<tr class="res-detail"><td colspan="' + (3 + Q.length) + '"><ol>' + Q.map(function (qq, i) {
+            var m = marks.charAt(i);
+            return '<li><b>' + esc(qq.prompt) + '</b><br><span class="' + (m === '1' ? 'ok' : 'no') + '">' + esc(ans[i] || '') + '</span>' +
+              (m === '1' ? '' : '<br><span class="res-correct">Correct: ' + esc(W.correctText(qq)) + '</span>') + '</li>';
+          }).join('') + '</ol></td></tr>';
+        }
+      });
+      html += '</tbody>';
+      if (done.length) {
+        html += '<tfoot><tr><td colspan="3">% correct</td>';
+        Q.forEach(function (_, i) {
+          var ok = done.filter(function (r) { return String(r.marks || '').charAt(i) === '1'; }).length;
+          var pc = Math.round(ok / done.length * 100);
+          html += '<td class="qcell ' + (pc < 50 ? 'low' : '') + '">' + pc + '</td>';
+        });
+        html += '</tr></tfoot>';
+      }
+      html += '</table></div><p class="hub-help">Tap a name to see that student’s answers. In the % correct row, red marks a question that fewer than half of the students got right: a good one to review together.</p>';
+    }
+    html += '</div></div>';
+    el.innerHTML = html;
+    var body = el.querySelector('.res-body'); if (body) body.scrollTop = scroll;
+    document.getElementById('r-close').onclick = closeResults;
+    el.querySelectorAll('input[name="rw"]').forEach(function (r) { r.onchange = function () { resState.when = r.value; loadResults(); }; });
+    var mine = document.getElementById('r-mine'); if (mine) mine.onchange = function () { resState.mine = mine.checked; loadResults(); };
+    el.querySelectorAll('[data-att]').forEach(function (b) {
+      b.onclick = function () { var a = b.getAttribute('data-att'); resState.open[a] = !resState.open[a]; drawResults(rows, message); };
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || document.fullscreenElement) return;
+    var qr = document.getElementById('qr'), res = document.getElementById('res');
+    if (qr && qr.classList.contains('open')) closeQR();
+    else if (res && res.classList.contains('open')) closeResults();
+  });
+
+  render();
+};
+
+/* ===== Quiz player ===== */
+/* W002 Review Quizzes — quiz player.
+   URL: index.html?q=<quiz id>[&s=<section>][&mode=preview|key]
+   No answers are shown until the student finishes. Progress is saved on the device. */
+window.W002.run_quiz = function () {
+  'use strict';
+  var W = window.W002, esc = W.esc;
+  var params = new URLSearchParams(location.search);
+  var qid = params.get('q') || '';
+  var mode = params.get('mode') || 'student';
+  var session = { s: (params.get('s') || '').slice(0, 30) };
+  var RESULTS_URL = (W.CONFIG && W.CONFIG.resultsURL || '').trim();
+  var app = document.getElementById('app');
+  var found = W.findQuiz(qid);
+
+  var TYPE_LABEL = { mc: 'Choose', gap: 'Type', sort: 'Sort', order: 'Put in order', match: 'Match', tap: 'Tap' };
+
+  if (!found) {
+    document.title = 'Quiz not found · W002';
+    app.innerHTML = '<div class="band"><div><h1>Quiz not found</h1><p class="sub">Check the link or scan the QR code again.</p></div></div>' +
+      '<main class="quiz-main"><p>This link does not match a quiz.</p><p><a class="btn" href="' + W.PAGE + '">Go to the quiz hub</a></p></main>';
+    return;
+  }
+  var unit = found.unit, quiz = found.quiz, Q = quiz.questions;
+  document.title = quiz.title + ' · W002 Review Quiz';
+
+  /* ---------------------------------------------------------------- header */
+  function bandHTML() {
+    return '<header class="band"><div><h1>' + esc(quiz.title) + '</h1>' +
+      '<p class="sub">Starter quiz for Module ' + quiz.module + ': ' + esc(quiz.moduleTitle) + '</p></div>' +
+      W.trackerHTML(unit, quiz.module) + '</header>';
+  }
+  function teacherBar() {
+    if (mode === 'preview') return '<div class="teacher-bar">Teacher preview: nothing is saved. <a href="' + W.PAGE + '?q=' + esc(qid) + '&mode=key">Open the answer key</a> · <a href="' + W.PAGE + '">Back to the hub</a></div>';
+    if (mode === 'key') return '<div class="teacher-bar">Answer key for teachers · <a href="' + W.PAGE + '?q=' + esc(qid) + '&mode=preview">Try the quiz</a> · <a href="' + W.PAGE + '">Back to the hub</a></div>';
+    return '';
+  }
+
+  /* ---------------------------------------------------------------- parsing helpers */
+  function parseGap(q) {
+    var parts = [], gaps = [], re = /\[\[(.+?)\]\]/g, last = 0, m;
+    while ((m = re.exec(q.text))) {
+      parts.push({ t: q.text.slice(last, m.index) });
+      parts.push({ gap: gaps.length });
+      gaps.push(m[1].split('|').map(function (s) { return s.trim(); }));
+      last = re.lastIndex;
+    }
+    parts.push({ t: q.text.slice(last) });
+    return { parts: parts, gaps: gaps };
+  }
+  function parseWords(q) {
+    var tokens = [], re = /\{([^}]+)\}([^\s{]*)|([^\s{]+)/g, m;
+    while ((m = re.exec(q.text))) {
+      if (m[1] !== undefined) tokens.push({ w: m[1], after: m[2] || '', target: true });
+      else {
+        var w = m[3], mm = w.match(/^(.*?)([.,!?;:]*)$/);
+        tokens.push({ w: mm[1] || w, after: mm[1] ? mm[2] : '', target: false });
+      }
+    }
+    return tokens;
+  }
+  function tapTargets(q, view) {
+    if (q.mode === 'word') { var t = []; view.tokens.forEach(function (tk, i) { if (tk.target) t.push(i); }); return t; }
+    return q.answer.slice();
+  }
+  function isMulti(q) { return q.type === 'mc' && Array.isArray(q.answer); }
+  function needCount(q, view) {
+    if (q.type === 'tap') return tapTargets(q, view).length;
+    if (isMulti(q)) return q.answer.length;
+    return 1;
+  }
+  function numWord(n) { return ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][n] || String(n); }
+
+  /* ---------------------------------------------------------------- answer key mode */
+  if (mode === 'key') { renderKey(); return; }
+
+  /* ---------------------------------------------------------------- state */
+  var storeKey = 'w002:' + qid + ':' + (session.s || 'open');
+  function fresh() {
+    return { name: '', seed: Math.random().toString(36).slice(2) + Date.now().toString(36), answers: [], cur: 0, started: false, finished: false, startedAt: 0, finishedAt: 0 };
+  }
+  var st = mode === 'preview' ? fresh() : (W.store.get(storeKey, null) || fresh());
+  function save() { if (mode !== 'preview') W.store.set(storeKey, st); }
+
+  /* Per-student shuffles (seeded, so a refresh keeps the same order). */
+  var views = [];
+  function buildViews() {
+    var rand = W.rng(st.seed);
+    views = Q.map(function (q) {
+      var v = {};
+      if (q.type === 'mc') {
+        var fixed = q.fixed || (q.options.length === 2 && /^true$/i.test(q.options[0]));
+        v.order = fixed ? q.options.map(function (_, i) { return i; }) : W.shuffledIndexes(q.options.length, rand);
+      } else if (q.type === 'sort' || q.type === 'order') {
+        v.order = W.shuffledIndexes(q.items.length, rand);
+      } else if (q.type === 'match') {
+        v.order = W.shuffledIndexes(q.pairs.length, rand);
+      } else if (q.type === 'gap') {
+        var g = parseGap(q); v.parts = g.parts; v.gaps = g.gaps;
+        if (q.bank) { var bo = W.shuffledIndexes(q.bank.length, rand); v.bank = bo.map(function (k) { return q.bank[k]; }); }
+      } else if (q.type === 'tap' && q.mode === 'word') {
+        v.tokens = parseWords(q);
+      }
+      return v;
+    });
+  }
+  buildViews();
+
+  function blank(i) {
+    var q = Q[i], v = views[i];
+    switch (q.type) {
+      case 'mc': return isMulti(q) ? [] : null;
+      case 'gap': return v.gaps.map(function () { return ''; });
+      case 'sort': return q.items.map(function () { return -1; });
+      case 'order': return [];
+      case 'match': return q.pairs.map(function () { return -1; });
+      case 'tap': return [];
+    }
+  }
+  function ans(i) { if (st.answers[i] === undefined || st.answers[i] === null && isMulti(Q[i])) st.answers[i] = blank(i); return st.answers[i]; }
+
+  function answered(i) {
+    var q = Q[i], a = st.answers[i], v = views[i];
+    if (a === undefined || a === null) return false;
+    switch (q.type) {
+      case 'mc': return isMulti(q) ? a.length === q.answer.length : a !== null;
+      case 'gap': return a.every(function (x) { return W.norm(x) !== ''; });
+      case 'sort': return a.every(function (x) { return x !== -1; });
+      case 'order': return a.length === q.items.length;
+      case 'match': return a.every(function (x) { return x !== -1; });
+      case 'tap': return a.length === needCount(q, v);
+    }
+    return false;
+  }
+
+  /* ---------------------------------------------------------------- grading */
+  function grade(i) {
+    var q = Q[i], a = st.answers[i], v = views[i], n, ok;
+    if (a === undefined || a === null) a = blank(i);
+    switch (q.type) {
+      case 'mc':
+        if (!isMulti(q)) return { score: a === q.answer ? 1 : 0 };
+        return setScore(a, q.answer);
+      case 'gap':
+        n = 0; a.forEach(function (x, gi) { if (gapOK(v.gaps[gi], x)) n++; });
+        return { score: n / v.gaps.length };
+      case 'sort':
+        n = 0; q.items.forEach(function (it, ii) { if (a[ii] === it[1]) n++; });
+        return { score: n / q.items.length };
+      case 'order':
+        n = 0; for (var p = 0; p < q.items.length; p++) if (a[p] === p) n++;
+        return { score: n / q.items.length };
+      case 'match':
+        n = 0; q.pairs.forEach(function (_, pi) { if (a[pi] === pi) n++; });
+        return { score: n / q.pairs.length };
+      case 'tap':
+        return setScore(a, tapTargets(q, v));
+    }
+    return { score: 0 };
+  }
+  function setScore(chosen, correct) {
+    var hit = 0, wrong = 0;
+    chosen.forEach(function (c) { if (correct.indexOf(c) >= 0) hit++; else wrong++; });
+    if (hit === correct.length && wrong === 0) return { score: 1 };
+    return { score: Math.max(0, (hit - wrong) / correct.length) };
+  }
+  function gapOK(accepted, typed) {
+    var t = W.norm(typed); if (!t) return false;
+    return accepted.some(function (x) { return W.norm(x) === t; });
+  }
+
+  /* ---------------------------------------------------------------- results for the teacher (optional) */
+  /* Sends the student's progress to the Google Apps Script set in W002.CONFIG.resultsURL.
+     Nothing is sent in teacher preview, or when no URL is set. */
+  function answeredCount() { var n = 0; for (var k = 0; k < Q.length; k++) if (answered(k)) n++; return n; }
+  function report(status) {
+    if (!RESULTS_URL || mode === 'preview') return;
+    var data = {
+      attempt: st.seed, unit: unit.id, quiz: qid, section: session.s, name: st.name,
+      status: status, answered: answeredCount()
+    };
+    if (status === 'finished') {
+      var full = 0;
+      data.marks = Q.map(function (_, i) { var g = grade(i).score; if (g === 1) full++; return g === 1 ? '1' : g > 0 ? '~' : '0'; }).join('');
+      data.score = full;
+      data.answers = Q.map(function (_, i) { return answerText(i); });
+      data.seconds = st.startedAt ? Math.round((st.finishedAt - st.startedAt) / 1000) : '';
+    }
+    try {
+      fetch(RESULTS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data), keepalive: true })
+        .catch(function () { /* offline: the student still sees their result */ });
+    } catch (e) { /* ignore */ }
+  }
+  var progressTimer = null, lastSent = -1;
+  function progressSoon() {
+    if (!RESULTS_URL || mode === 'preview' || st.finished) return;
+    clearTimeout(progressTimer);
+    progressTimer = setTimeout(function () {
+      var n = answeredCount();
+      if (n !== lastSent) { lastSent = n; report('answering'); }
+    }, 2500);
+  }
+  /* The student's answer as plain text, for the teacher's results sheet. */
+  function answerText(i) {
+    var q = Q[i], v = views[i], a = st.answers[i];
+    if (a === undefined || a === null) a = blank(i);
+    var none = '(no answer)';
+    switch (q.type) {
+      case 'mc': {
+        var ch = isMulti(q) ? a : (a === null ? [] : [a]);
+        return ch.length ? ch.map(function (k) { return q.options[k]; }).join(' | ') : none;
+      }
+      case 'gap': return a.some(function (x) { return x.trim(); }) ? a.map(function (x) { return x.trim() || '___'; }).join(' | ') : none;
+      case 'sort': return q.items.map(function (it, ii) { return it[0] + ' → ' + (a[ii] >= 0 ? q.bins[a[ii]] : '?'); }).join(' | ');
+      case 'order': return a.length ? a.map(function (k) { return q.items[k]; }).join(' → ') : none;
+      case 'match': return q.pairs.map(function (p, pi) { return p[0] + ' → ' + (a[pi] >= 0 ? q.pairs[a[pi]][1] : '?'); }).join(' | ');
+      case 'tap':
+        if (!a.length) return none;
+        return a.map(function (k) { return q.mode === 'word' ? v.tokens[k].w : q.sentences[k]; }).join(' | ');
+    }
+    return '';
+  }
+
+  /* ---------------------------------------------------------------- screens */
+  function render() {
+    if (st.finished) return renderResults();
+    if (!st.started) return renderStart();
+    renderQuestion();
+  }
+
+  function renderStart() {
+    var info = [];
+    if (session.s) info.push(esc(session.s));
+    app.innerHTML = teacherBar() + bandHTML() +
+      '<main class="quiz-main"><div class="start">' +
+      '<div><p class="label">Starter quiz</p>' +
+      '<div class="facts"><span class="pill navy">10 questions</span><span class="pill">About 5 minutes</span><span class="pill">Answers at the end</span></div></div>' +
+      '<p>Answer all ten questions. You can go back and change an answer before you finish. You will see your score and the correct answers at the end. ' +
+      (mode === 'preview' ? '' : 'Your answers are saved on this phone or tablet, so you can close the page and come back.' + (RESULTS_URL ? ' Your teacher can see your answers.' : '')) + '</p>' +
+      (info.length ? '<p class="hint" style="margin:0">' + info.join(' · ') + '</p>' : '') +
+      '<div><label class="label" for="nm" style="display:block">Your name</label>' +
+      '<input id="nm" type="text" autocomplete="name" maxlength="40" placeholder="First name and family name" value="' + esc(st.name) + '"></div>' +
+      '<div><button class="btn primary" id="go" type="button">Start the quiz</button></div>' +
+      '</div></main>';
+    var nm = document.getElementById('nm'), go = document.getElementById('go');
+    function check() { go.disabled = mode !== 'preview' && nm.value.trim().length < 2; }
+    nm.addEventListener('input', check); check();
+    nm.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !go.disabled) go.click(); });
+    go.addEventListener('click', function () {
+      st.name = nm.value.trim() || 'Teacher';
+      st.started = true; st.startedAt = st.startedAt || Date.now(); st.cur = 0; save(); report('started'); render(); window.scrollTo(0, 0);
+    });
+  }
+
+  /* --------------------------- question screen */
+  var selChip = null;      // sort: item selected by tap
+  var suppressClick = false;
+
+  function renderQuestion() {
+    var i = st.cur, q = Q[i], v = views[i];
+    ans(i);
+    var dots = '<nav class="progress" aria-label="Questions">';
+    for (var d = 0; d < Q.length; d++) {
+      dots += '<button type="button" class="dot' + (d === i ? ' here' : answered(d) ? ' done' : '') + '" data-go="' + d + '" aria-label="Question ' + (d + 1) + (answered(d) ? ', answered' : '') + '">' + (d + 1) + '</button>';
+    }
+    dots += '</nav>';
+    var nDone = 0; for (var k = 0; k < Q.length; k++) if (answered(k)) nDone++;
+
+    app.innerHTML = teacherBar() + bandHTML() +
+      '<main class="quiz-main">' + dots +
+      '<div class="qtitle"><p class="label">Question ' + (i + 1) + ' of ' + Q.length + '</p><span class="pill">' + TYPE_LABEL[q.type].toUpperCase() + '</span></div>' +
+      '<p class="prompt" id="qp">' + esc(q.prompt) + '</p>' +
+      (q.context ? '<div class="context">' + esc(q.context) + '</div>' : '') +
+      '<div id="qa" role="group" aria-labelledby="qp"></div>' +
+      '</main>' +
+      '<div class="navbar"><div class="inner">' +
+      '<button class="btn" id="back" type="button"' + (i === 0 ? ' disabled' : '') + '>Back</button>' +
+      '<span class="count" id="count">' + nDone + ' of ' + Q.length + ' answered</span>' +
+      (i === Q.length - 1 ? '<button class="btn primary" id="next" type="button">Finish</button>' : '<button class="btn navy" id="next" type="button">Next</button>') +
+      '</div></div><div class="modal-bg" id="modal"></div>';
+
+    var qa = document.getElementById('qa');
+    ({ mc: drawMC, gap: drawGap, sort: drawSort, order: drawOrder, match: drawMatch, tap: drawTap })[q.type](qa, i, q, v);
+
+    app.querySelectorAll('[data-go]').forEach(function (b) {
+      b.addEventListener('click', function () { go(+b.getAttribute('data-go')); });
+    });
+    document.getElementById('back').addEventListener('click', function () { go(i - 1); });
+    document.getElementById('next').addEventListener('click', function () {
+      if (i < Q.length - 1) go(i + 1); else confirmFinish();
+    });
+  }
+  function go(n) {
+    if (n < 0 || n >= Q.length) return;
+    st.cur = n; selChip = null; save(); renderQuestion(); window.scrollTo(0, 0);
+  }
+  function changed() {
+    save(); progressSoon();
+    var nDone = 0; for (var k = 0; k < Q.length; k++) if (answered(k)) nDone++;
+    var c = document.getElementById('count'); if (c) c.textContent = nDone + ' of ' + Q.length + ' answered';
+    var dot = app.querySelector('[data-go="' + st.cur + '"]'); if (dot) dot.className = 'dot here';
+  }
+
+  /* --------------------------- multiple choice */
+  function drawMC(el, i, q, v) {
+    var multi = isMulti(q), a = ans(i), letters = 'ABCDEFGH';
+    var html = multi ? '<p class="hint">Choose ' + numWord(q.answer.length) + ' answers.</p>' : '';
+    html += '<div class="options' + (q.options.length === 2 && q.options.every(function (o) { return o.length < 12; }) ? ' two' : '') + '">';
+    v.order.forEach(function (oi, pos) {
+      var on = multi ? a.indexOf(oi) >= 0 : a === oi;
+      html += '<button type="button" class="opt' + (on ? ' on' : '') + '" data-o="' + oi + '" aria-pressed="' + on + '"><span class="letter">' + letters[pos] + '</span><span>' + esc(q.options[oi]) + '</span></button>';
+    });
+    el.innerHTML = html + '</div>';
+    el.querySelectorAll('.opt').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var oi = +b.getAttribute('data-o');
+        if (!multi) st.answers[i] = oi;
+        else {
+          var arr = ans(i), at = arr.indexOf(oi);
+          if (at >= 0) arr.splice(at, 1); else { arr.push(oi); if (arr.length > q.answer.length) arr.shift(); }
+        }
+        changed(); drawMC(el, i, q, v);
+      });
+    });
+  }
+
+  /* --------------------------- gap fill */
+  function drawGap(el, i, q, v) {
+    var a = ans(i);
+    var html = '<p class="hint">Type your answer' + (v.gaps.length > 1 ? 's' : '') + ' in the box' + (v.gaps.length > 1 ? 'es' : '') + '.</p><div class="gaptext">';
+    v.parts.forEach(function (p) {
+      if (p.gap === undefined) html += esc(p.t);
+      else {
+        var w = Math.max(6, Math.max.apply(null, v.gaps[p.gap].map(function (s) { return s.length; })) + 3);
+        html += '<input class="gapin" type="text" data-g="' + p.gap + '" value="' + esc(a[p.gap]) + '" style="width:' + w + 'ch" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Gap ' + (p.gap + 1) + '">';
+      }
+    });
+    html += '</div>';
+    if (v.bank) html += '<div class="bank"><span class="bank-label">WORDS TO USE</span>' + v.bank.map(function (b) { return '<span class="pill">' + esc(b) + '</span>'; }).join('') + '</div>';
+    el.innerHTML = html;
+    var ins = el.querySelectorAll('.gapin');
+    ins.forEach(function (inp, n) {
+      inp.addEventListener('input', function () { a[+inp.getAttribute('data-g')] = inp.value; changed(); });
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); if (ins[n + 1]) ins[n + 1].focus(); else inp.blur(); } });
+    });
+  }
+
+  /* --------------------------- sort (drag or tap) */
+  function drawSort(el, i, q, v) {
+    var a = ans(i);
+    function chip(ii) {
+      return '<button type="button" class="chip' + (selChip === ii ? ' sel' : '') + '" data-i="' + ii + '">' + esc(q.items[ii][0]) + '</button>';
+    }
+    var pool = v.order.filter(function (ii) { return a[ii] === -1; });
+    var html = '<p class="hint">Drag each one into a box. Or tap it, then tap a box.</p>';
+    html += '<div class="pool" data-bin="-1" aria-label="Not sorted yet">' + pool.map(chip).join('') + '</div>';
+    html += '<div class="bins" style="--cols:' + q.bins.length + '">';
+    q.bins.forEach(function (b, bi) {
+      var inBin = v.order.filter(function (ii) { return a[ii] === bi; });
+      html += '<div class="bin' + (selChip !== null ? ' armed' : '') + '" data-bin="' + bi + '" role="button" tabindex="0" aria-label="Box: ' + esc(b) + '">' +
+        '<div class="bin-head"><span>' + esc(b) + '</span><span class="n">' + inBin.length + '</span></div>' + inBin.map(chip).join('') + '</div>';
+    });
+    el.innerHTML = html + '</div>';
+
+    function place(ii, bi) { a[ii] = bi; selChip = null; changed(); drawSort(el, i, q, v); }
+
+    el.querySelectorAll('[data-bin]').forEach(function (bin) {
+      function act(e) {
+        if (suppressClick) return;
+        if (e.target.closest('.chip') && selChip === null) return;
+        if (selChip !== null) { e.stopPropagation(); place(selChip, +bin.getAttribute('data-bin')); }
+      }
+      bin.addEventListener('click', act);
+      bin.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && selChip !== null) { e.preventDefault(); place(selChip, +bin.getAttribute('data-bin')); } });
+    });
+    el.querySelectorAll('.chip').forEach(function (c) {
+      var ii = +c.getAttribute('data-i');
+      c.addEventListener('click', function (e) {
+        if (suppressClick) { suppressClick = false; return; }
+        if (selChip !== null && selChip !== ii && !(a[ii] === -1 && a[selChip] === -1)) return; // let the bin handle it (place selected chip there)
+        e.stopPropagation();
+        selChip = selChip === ii ? null : ii;
+        drawSort(el, i, q, v);
+      });
+      enableDrag(c, ii, function (bi) { place(ii, bi); });
+    });
+  }
+
+  function enableDrag(c, ii, onDrop) {
+    var sx = 0, sy = 0, dragging = false, ghost = null, over = null, pid = null;
+    c.addEventListener('pointerdown', function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      sx = e.clientX; sy = e.clientY; dragging = false; pid = e.pointerId;
+      try { c.setPointerCapture(pid); } catch (x) { /* ignore */ }
+    });
+    c.addEventListener('pointermove', function (e) {
+      if (pid === null || e.pointerId !== pid) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (!dragging && Math.sqrt(dx * dx + dy * dy) > 8) {
+        dragging = true;
+        var r = c.getBoundingClientRect();
+        ghost = c.cloneNode(true); ghost.classList.add('ghost'); ghost.style.width = r.width + 'px';
+        document.body.appendChild(ghost); c.classList.add('placeholder');
+      }
+      if (dragging) {
+        e.preventDefault();
+        ghost.style.left = (e.clientX - 20) + 'px'; ghost.style.top = (e.clientY - 20) + 'px';
+        var under = document.elementFromPoint(e.clientX, e.clientY);
+        var t = under && under.closest('[data-bin]');
+        if (over && over !== t) over.classList.remove('target');
+        over = t; if (t) t.classList.add('target');
+        if (e.clientY > window.innerHeight - 60) window.scrollBy(0, 12); else if (e.clientY < 60) window.scrollBy(0, -12);
+      }
+    });
+    function end(e) {
+      if (pid === null) return;
+      pid = null;
+      if (!dragging) return;
+      suppressClick = true; setTimeout(function () { suppressClick = false; }, 50);
+      if (ghost) ghost.remove(); c.classList.remove('placeholder');
+      if (over) over.classList.remove('target');
+      var under = document.elementFromPoint(e.clientX, e.clientY);
+      var t = under && under.closest('[data-bin]');
+      dragging = false;
+      if (t) onDrop(+t.getAttribute('data-bin'));
+    }
+    c.addEventListener('pointerup', end);
+    c.addEventListener('pointercancel', function () {
+      pid = null; if (ghost) ghost.remove(); c.classList.remove('placeholder'); if (over) over.classList.remove('target'); dragging = false;
+    });
+  }
+
+  /* --------------------------- order (tap to build) */
+  function drawOrder(el, i, q, v) {
+    var a = ans(i);
+    var html = '<p class="hint">Tap the sentences in the correct order. Tap a numbered sentence to take it back.</p><div class="slots">';
+    for (var p = 0; p < q.items.length; p++) {
+      html += '<div class="slot"><span class="num">' + (p + 1) + '</span>' +
+        (a[p] !== undefined ? '<button type="button" class="chip" data-out="' + p + '">' + esc(q.items[a[p]]) + '</button>' : '<span class="empty"></span>') + '</div>';
+    }
+    html += '</div><div class="pool" aria-label="Sentences to place">';
+    v.order.forEach(function (ii) { if (a.indexOf(ii) < 0) html += '<button type="button" class="chip" data-in="' + ii + '">' + esc(q.items[ii]) + '</button>'; });
+    el.innerHTML = html + '</div>';
+    el.querySelectorAll('[data-in]').forEach(function (b) {
+      b.addEventListener('click', function () { a.push(+b.getAttribute('data-in')); changed(); drawOrder(el, i, q, v); });
+    });
+    el.querySelectorAll('[data-out]').forEach(function (b) {
+      b.addEventListener('click', function () { a.splice(+b.getAttribute('data-out'), 1); changed(); drawOrder(el, i, q, v); });
+    });
+  }
+
+  /* --------------------------- match */
+  function drawMatch(el, i, q, v) {
+    var a = ans(i);
+    var html = '<p class="hint">Choose the correct answer for each one.</p>';
+    q.pairs.forEach(function (pr, pi) {
+      html += '<div class="match-row"><div class="left">' + esc(pr[0]) + '</div><select data-p="' + pi + '" class="' + (a[pi] >= 0 ? 'chosen' : '') + '" aria-label="' + esc(pr[0]) + '">' +
+        '<option value="-1">Choose ...</option>' +
+        v.order.map(function (ri) { return '<option value="' + ri + '"' + (a[pi] === ri ? ' selected' : '') + '>' + esc(q.pairs[ri][1]) + '</option>'; }).join('') +
+        '</select></div>';
+    });
+    el.innerHTML = html;
+    el.querySelectorAll('select').forEach(function (s) {
+      s.addEventListener('change', function () { a[+s.getAttribute('data-p')] = +s.value; s.className = +s.value >= 0 ? 'chosen' : ''; changed(); });
+    });
+  }
+
+  /* --------------------------- tap (find the sentence / word) */
+  function drawTap(el, i, q, v) {
+    var a = ans(i), need = needCount(q, v), what = q.mode === 'word' ? (need > 1 ? 'words' : 'word') : (need > 1 ? 'sentences' : 'sentence');
+    var html = '<div class="taptext">';
+    if (q.mode === 'word') {
+      v.tokens.forEach(function (tk, ti) {
+        html += '<button type="button" class="tapseg' + (a.indexOf(ti) >= 0 ? ' on' : '') + '" data-t="' + ti + '" aria-pressed="' + (a.indexOf(ti) >= 0) + '">' + esc(tk.w) + esc(tk.after) + '</button> ';
+      });
+    } else {
+      q.sentences.forEach(function (s, si) {
+        html += '<button type="button" class="tapseg sentence' + (a.indexOf(si) >= 0 ? ' on' : '') + '" data-t="' + si + '" aria-pressed="' + (a.indexOf(si) >= 0) + '">' + esc(s) + '</button> ';
+      });
+    }
+    html += '</div><p class="tapcount">Tap ' + numWord(need) + ' ' + what + '. Chosen: ' + a.length + ' of ' + need + '. Tap again to undo.</p>';
+    el.innerHTML = html;
+    el.querySelectorAll('[data-t]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = +b.getAttribute('data-t'), at = a.indexOf(t);
+        if (at >= 0) a.splice(at, 1); else { a.push(t); if (a.length > need) a.shift(); }
+        changed(); drawTap(el, i, q, v);
+      });
+    });
+  }
+
+  /* --------------------------- finish */
+  function confirmFinish() {
+    var missing = []; for (var k = 0; k < Q.length; k++) if (!answered(k)) missing.push(k + 1);
+    var modal = document.getElementById('modal');
+    modal.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mh"><h3 id="mh">Finish the quiz?</h3>' +
+      (missing.length ? '<p>You have not finished question' + (missing.length > 1 ? 's ' : ' ') + missing.join(', ') + '.</p>' : '<p>You answered all ten questions.</p>') +
+      '<p>After you finish, you cannot change your answers.</p>' +
+      '<div class="row">' + (missing.length ? '<button class="btn" id="m-go" type="button">Go to question ' + missing[0] + '</button>' : '<button class="btn" id="m-no" type="button">Check again</button>') +
+      '<button class="btn primary" id="m-yes" type="button">Finish</button></div></div>';
+    modal.classList.add('open');
+    document.getElementById('m-yes').focus();
+    document.getElementById('m-yes').addEventListener('click', function () {
+      st.finished = true; st.finishedAt = Date.now(); save(); modal.classList.remove('open');
+      report('finished'); setTimeout(function () { report('finished'); }, 4000);
+      render(); window.scrollTo(0, 0);
+    });
+    var back = document.getElementById('m-go') || document.getElementById('m-no');
+    back.addEventListener('click', function () { modal.classList.remove('open'); if (missing.length) go(missing[0] - 1); });
+  }
+
+  /* --------------------------- results */
+  function renderResults() {
+    var full = 0, part = 0, marks = [];
+    Q.forEach(function (_, i) { var g = grade(i); marks.push(g.score); if (g.score === 1) full++; else if (g.score > 0) part++; });
+    var msg = full === 10 ? 'Excellent!' : full >= 8 ? 'Great work!' : full >= 6 ? 'Good work!' : 'Keep going!';
+    var secs = st.startedAt && st.finishedAt ? Math.round((st.finishedAt - st.startedAt) / 1000) : 0;
+    var time = secs ? Math.floor(secs / 60) + ' min ' + (secs % 60) + ' s' : '';
+    var when = st.finishedAt ? new Date(st.finishedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '';
+
+    var html = teacherBar() + bandHTML() + '<main class="quiz-main" style="padding-bottom:40px">' +
+      '<div class="result-top"><div class="sticker" aria-hidden="true"><div><div class="big">' + full + '/10</div><div class="small">' + esc(msg.replace('!', '').toUpperCase()) + '</div></div></div>' +
+      '<div style="flex:1;min-width:240px"><h2>' + esc(msg) + ' You got ' + full + ' out of 10.</h2>' +
+      (part ? '<p style="margin:0 0 10px">' + part + (part > 1 ? ' answers were' : ' answer was') + ' nearly right.</p>' : '') +
+      '<div class="slip"><b>' + esc(st.name) + '</b>' +
+      (session.s ? ' · ' + esc(session.s) : '') +
+      (when ? ' · Finished ' + esc(when) : '') + (time ? ' (' + esc(time) + ')' : '') +
+      '<br><span style="color:var(--slate);font-size:0.85rem">' + (RESULTS_URL && mode !== 'preview' ? 'Your teacher can see your result.' : 'Show this screen to your teacher if they ask.') + '</span></div></div></div>' +
+      '<p class="label">Check your answers</p><p style="margin-top:0">Read the correct answers. Look carefully at any question with ✗ or ~.</p>' +
+      '<div class="review">';
+    Q.forEach(function (q, i) {
+      var s = marks[i], cls = s === 1 ? 'ok' : s > 0 ? 'part' : 'no', sym = s === 1 ? '✓' : s > 0 ? '~' : '✗';
+      html += '<section class="ritem"><div class="rhead"><span class="mark ' + cls + '" aria-label="' + (s === 1 ? 'Correct' : s > 0 ? 'Nearly right' : 'Not correct') + '">' + sym + '</span>' +
+        '<span class="label" style="margin:0">Question ' + (i + 1) + '</span></div>' +
+        '<div class="rprompt">' + esc(q.prompt) + '</div>' +
+        (q.context ? '<div class="context" style="margin:6px 0 0">' + esc(q.context) + '</div>' : '') +
+        reviewBody(i) +
+        '<div class="explain">' + esc(q.explain) + '</div></section>';
+    });
+    html += '</div>';
+    if (mode === 'preview') html += '<p style="margin-top:20px"><button class="btn navy" id="again" type="button">Try again</button> <a class="btn" href="' + W.PAGE + '">Back to the hub</a></p>';
+    html += '</main>';
+    app.innerHTML = html;
+    var again = document.getElementById('again');
+    if (again) again.addEventListener('click', function () { st = fresh(); buildViews(); st.started = true; st.startedAt = Date.now(); st.name = 'Teacher'; render(); window.scrollTo(0, 0); });
+  }
+
+  function reviewBody(i) {
+    var q = Q[i], v = views[i], a = st.answers[i];
+    if (a === undefined || a === null) a = blank(i);
+    var h = '';
+    switch (q.type) {
+      case 'mc': {
+        var correct = isMulti(q) ? q.answer : [q.answer], chosen = isMulti(q) ? a : (a === null ? [] : [a]);
+        h = '<ul class="rlist">';
+        q.options.forEach(function (o, oi) {
+          var isC = correct.indexOf(oi) >= 0, isP = chosen.indexOf(oi) >= 0;
+          if (!isC && !isP) return;
+          h += '<li class="' + (isC ? (isP ? 'right' : 'right-but-missed') : 'wrong') + '">' + esc(o) +
+            (isC ? ' <span class="tag g">CORRECT ANSWER</span>' : '') + (isP ? ' <span class="tag ' + (isC ? 'g' : 'c') + '">YOUR ANSWER</span>' : '') + '</li>';
+        });
+        if (!chosen.length) h += '<li class="wrong" style="text-decoration:none">You did not answer.</li>';
+        return h + '</ul>';
+      }
+      case 'gap':
+        h = '<div class="rtext">';
+        v.parts.forEach(function (p) {
+          if (p.gap === undefined) { h += esc(p.t); return; }
+          var typed = a[p.gap] || '', ok = gapOK(v.gaps[p.gap], typed);
+          if (ok) h += '<span class="gapans ok">' + esc(typed.trim()) + ' ✓</span>';
+          else h += (typed.trim() ? '<span class="gapans no">' + esc(typed.trim()) + '</span> ' : '<span class="gapans no">___</span> ') + '<span class="gapfix">' + esc(v.gaps[p.gap][0]) + '</span>';
+        });
+        return h + '</div>';
+      case 'sort':
+        h = '<table class="rtable"><tr><th>Sentence</th><th>Your answer</th><th>Correct</th></tr>';
+        q.items.forEach(function (it, ii) {
+          var ok = a[ii] === it[1];
+          h += '<tr><td>' + esc(it[0]) + '</td><td class="' + (ok ? 'ok' : 'no') + '">' + (a[ii] >= 0 ? esc(q.bins[a[ii]]) : '—') + (ok ? ' ✓' : '') + '</td><td>' + esc(q.bins[it[1]]) + '</td></tr>';
+        });
+        return h + '</table>';
+      case 'order':
+        h = '<table class="rtable"><tr><th>#</th><th>Correct order</th><th>Your order</th></tr>';
+        q.items.forEach(function (it, p) {
+          var ok = a[p] === p;
+          h += '<tr><td>' + (p + 1) + '</td><td>' + esc(it) + '</td><td class="' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓' : (a[p] !== undefined ? esc(q.items[a[p]]) : '—')) + '</td></tr>';
+        });
+        return h + '</table>';
+      case 'match':
+        h = '<table class="rtable"><tr><th></th><th>Your answer</th><th>Correct</th></tr>';
+        q.pairs.forEach(function (pr, pi) {
+          var ok = a[pi] === pi;
+          h += '<tr><td><b>' + esc(pr[0]) + '</b></td><td class="' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓' : (a[pi] >= 0 ? esc(q.pairs[a[pi]][1]) : '—')) + '</td><td>' + esc(pr[1]) + '</td></tr>';
+        });
+        return h + '</table>';
+      case 'tap': {
+        var targets = tapTargets(q, v);
+        h = '<div class="rtext">';
+        var segs = q.mode === 'word' ? v.tokens.map(function (t) { return t; }) : q.sentences.map(function (s) { return { w: s, after: '' }; });
+        segs.forEach(function (s, si) {
+          var isT = targets.indexOf(si) >= 0, isP = a.indexOf(si) >= 0;
+          var cls = isT && isP ? 'found' : isT ? 'hit' : isP ? 'miss' : '';
+          h += (cls ? '<span class="' + cls + '">' + esc(s.w) + '</span>' : esc(s.w)) + esc(s.after) + ' ';
+        });
+        h += '</div><p class="hint" style="margin:6px 0 0">Green = the correct answer.' + (a.some(function (x) { return targets.indexOf(x) < 0; }) ? ' Crossed out = your answer.' : '') + '</p>';
+        return h;
+      }
+    }
+    return '';
+  }
+
+  /* ---------------------------------------------------------------- answer key */
+  function renderKey() {
+    document.title = 'Answer key: ' + quiz.title + ' · W002';
+    var html = teacherBar() + bandHTML() + '<main class="quiz-main" style="padding-bottom:40px">' +
+      '<p class="label">Answer key</p>' +
+      '<p style="margin-top:0"><b>' + esc(W.DAY_NAMES[quiz.day]) + ', cycle week ' + quiz.cycle + '.</b> Starter for Module ' + quiz.module + '. Reviews: ' + esc(quiz.reviews) + '</p>' +
+      (quiz.status === 'provisional' ? '<div class="notice-bar"><b>Provisional.</b> ' + esc(quiz.note || 'Check against the finished modules.') + '</div>' : '') +
+      '<p class="no-print"><button class="btn small" type="button" onclick="window.print()">Print</button> ' +
+      '<button class="btn small" type="button" id="bookqr" title="A permanent QR code for the Starter slide in the book">Download QR for the book</button></p>';
+    Q.forEach(function (q, i) {
+      html += '<section class="keyq"><div class="qtitle"><p class="label" style="margin:0">Question ' + (i + 1) + '</p><span class="pill">' + TYPE_LABEL[q.type].toUpperCase() + '</span></div>' +
+        '<div class="rprompt" style="margin-top:4px">' + esc(q.prompt) + '</div>' +
+        (q.context ? '<div class="context" style="margin:6px 0 0">' + esc(q.context) + '</div>' : '') +
+        '<div class="ans">' + keyBody(q) + '</div>' +
+        '<div class="hint" style="margin:6px 0 0">' + esc(q.explain) + '</div></section>';
+    });
+    app.innerHTML = html + '</main>';
+    var bq = document.getElementById('bookqr');
+    if (bq) bq.addEventListener('click', function () {
+      var url = new URL(W.PAGE, location.href.split('#')[0].split('?')[0]).href + '?q=' + encodeURIComponent(qid);
+      W.download(W.drawQR(document.createElement('canvas'), url, { scale: 16, caption: 'W002 · Module ' + quiz.module + ' starter quiz' }), 'book-qr-' + qid + '.png');
+    });
+  }
+  function keyBody(q) {
+    switch (q.type) {
+      case 'mc': {
+        var c = Array.isArray(q.answer) ? q.answer : [q.answer];
+        return '<ul>' + q.options.map(function (o, oi) { return '<li>' + (c.indexOf(oi) >= 0 ? '<b>✓ ' + esc(o) + '</b>' : esc(o)) + '</li>'; }).join('') + '</ul>';
+      }
+      case 'gap': {
+        var g = parseGap(q), h = '';
+        g.parts.forEach(function (p) {
+          if (p.gap === undefined) h += esc(p.t);
+          else { var alts = g.gaps[p.gap]; h += '<b>' + esc(alts[0]) + '</b>' + (alts.length > 1 ? ' <span class="hint">(also: ' + esc(alts.slice(1).join(', ')) + ')</span>' : ''); }
+        });
+        return h + (q.bank ? '<div class="hint" style="margin:4px 0 0">Word bank: ' + esc(q.bank.join(', ')) + '</div>' : '');
+      }
+      case 'sort':
+        return q.bins.map(function (b, bi) {
+          return '<b>' + esc(b) + ':</b> ' + q.items.filter(function (it) { return it[1] === bi; }).map(function (it) { return esc(it[0]); }).join(' · ');
+        }).join('<br>');
+      case 'order':
+        return '<ol>' + q.items.map(function (it) { return '<li>' + esc(it) + '</li>'; }).join('') + '</ol>';
+      case 'match':
+        return '<ul>' + q.pairs.map(function (p) { return '<li><b>' + esc(p[0]) + '</b> → ' + esc(p[1]) + '</li>'; }).join('') + '</ul>';
+      case 'tap': {
+        if (q.mode === 'word') {
+          return parseWords(q).map(function (t) { return (t.target ? '<b style="background:#2E7D5B;color:#fff;padding:0 3px">' + esc(t.w) + '</b>' : esc(t.w)) + esc(t.after); }).join(' ');
+        }
+        return q.sentences.map(function (s, si) { return q.answer.indexOf(si) >= 0 ? '<b style="background:#2E7D5B;color:#fff;padding:0 3px">' + esc(s) + '</b>' : esc(s); }).join(' ');
+      }
+    }
+    return '';
+  }
+
+  render();
+};
+
+/* ===== Start: ?q=... opens a quiz; no ?q opens the hub ===== */
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('q')) window.W002.run_quiz(); else window.W002.run_hub();
+  } catch (e) {
+    document.getElementById('app').innerHTML = '<p style="padding:16px">Sorry, something went wrong: ' + String(e && e.message || e).replace(/</g, '&lt;') + '</p>';
+    throw e;
+  }
+})();
+</script>
+</body>
+</html>
